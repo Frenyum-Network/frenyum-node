@@ -6,7 +6,8 @@
   Frenyum is an open-source cryptocurrency project.
   
   [Join Discord](https://discord.gg/KjcGJMmwyA) | 
-  [Join Matrix](https://matrix.to/#/#frenyum-protocol:matrix.org) 
+  [Join Matrix](https://matrix.to/#/#frenyum-protocol:matrix.org) |
+  [Join Zulipchat](https://frenyum-network.zulipchat.com/) 
 </div>
 
 ### How to Use Frenyum?
