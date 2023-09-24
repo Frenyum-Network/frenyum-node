@@ -17,7 +17,7 @@ impl HashDigest
     
     pub fn calculate(bytes: &[u8]) -> Result<HashDigest, HashError>
     {   
-        if bytes.len() > 32 
+        if bytes.len() > HashDigest::LENGTH 
         {
            return Err(HashError::DataTooLong);
         }
