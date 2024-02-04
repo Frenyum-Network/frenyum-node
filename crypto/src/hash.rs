@@ -7,7 +7,8 @@ struct HashDigest([u8; HashDigest::LENGTH]);
 #[derive(Debug, PartialEq)]
 pub enum HashError
 {
-    Serialization,
+    HexError,
+    SerializationError,
     DataTooLong,
     EmptyData,
 }
@@ -92,6 +93,7 @@ impl std::fmt::Display for HashError
         match self 
         {
             HashError::DataTooLong => write!(f, "Data is too long!"),
+            HashError::HexError => write!(f, "Hex failed!"),
             HashError::EmptyData => write!(f, "Data is empty!")
         }
     }
@@ -108,7 +110,12 @@ impl From<[u8; HashDigest::LENGTH]> for HashDigest
 pub fn hex_digest(algorithm: Algorithm, data: &[u8]) -> Result<HashDigest, HashError>
 {
     match algorithm {
-        Algorithm::SHA256 => Ok(HashDigest::calculate(data)?),
+        Algorithm::SHA256 => {
+            match HashDigest::calculate(data) {
+                Ok(result) => Ok(result),
+                Err(err) => Err(HashError::HexError),
+            }
+        }
     }
 }
 
