@@ -3,7 +3,7 @@ extern crate ed25519_dalek;
 use rand::rngs::OsRng;
 use ed25519_dalek::*;
 use anyhow::Result;
-use crate::hash::CryptoHash;
+use crate::hash::*;
 use serde::Serialize;
 use bincode::serialize_into;
 
@@ -88,7 +88,7 @@ impl Signature {
         serialize_into(&mut bytes, &message)
             .map_err(|_| anyhow::anyhow!("SerializationError"))?;
         
-        let hash = hex_digest(Algorithms::SHA256, &bytes);
+        let hash = hex_digest(Algorithm::SHA256, &bytes);
         let hash_bytes = hex::decode(hash)?;
 
         if public_key.0.verify(&hash_bytes, &self.0).is_ok() {
