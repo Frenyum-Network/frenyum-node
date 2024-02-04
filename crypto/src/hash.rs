@@ -129,7 +129,10 @@ impl CryptoHash for [u8]
     fn hash(&self) -> Result<HashDigest, HashError>
     {
         let hash = hex_digest(Algorithm::SHA256, self)?;
-        Ok(hex::decode(hash)?.into())
+        match hex::decode(hash) {
+             Ok(result) => Ok(result.into()),
+             Err(err) => Err(HashError::HexError),
+        }
     }
 }
 
