@@ -59,6 +59,24 @@ impl HashDigest
     }
 }
 
+impl From<Vec<u8>> for HashDigest
+{
+    fn from(vec: Vec<u8>) -> Self
+    {
+        let mut hash_digest = [0u8; HashDigest::LENGTH];
+        hash_digest.copy_from_slice(&vec[..]);
+        HashDigest(hash_digest)
+    }
+}
+
+impl AsRef<[u8]> for HashDigest
+{
+    fn as_ref(&self) -> &[u8]
+    {
+        &self.0
+    }
+}
+
 impl std::fmt::Debug for HashDigest
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result 
@@ -87,10 +105,10 @@ impl From<[u8; HashDigest::LENGTH]> for HashDigest
     }
 }
 
-fn hex_digest(algorithm: Algorithm, data: &[u8]) -> Result<String, HashError>
+pub fn hex_digest(algorithm: Algorithm, data: &[u8]) -> Result<HashDigest, HashError>
 {
     match algorithm {
-        Algorithm::SHA256 => Ok(format!("{:x}", blake3:hash(data))),
+        Algorithm::SHA256 => Ok(HashDigest::calculate(data)?),
     }
 }
 
@@ -104,7 +122,7 @@ impl CryptoHash for [u8]
     fn hash(&self) -> Result<HashDigest, HashError>
     {
         let hash = hex_digest(Algorithm::SHA256, self)?;
-        Ok(hex::decode(hash)?)
+        Ok(hex::decode(hash)?.into())
     }
 }
 
