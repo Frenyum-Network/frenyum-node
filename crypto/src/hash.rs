@@ -7,8 +7,14 @@ struct HashDigest([u8; HashDigest::LENGTH]);
 #[derive(Debug, PartialEq)]
 pub enum HashError
 {
+    Serialization,
     DataTooLong,
     EmptyData,
+}
+
+pub enum Algorithm
+{
+    SHA256,
 }
 
 #[allow(dead_code)]
@@ -81,18 +87,24 @@ impl From<[u8; HashDigest::LENGTH]> for HashDigest
     }
 }
 
+fn hex_digest(algorithm: Algorithm, data: &[u8]) -> Result<String, HashError>
+{
+    match algorithm {
+        Algorithm::SHA256 => Ok(format!("{:x}", blake3:hash(data))),
+    }
+}
+
 pub trait CryptoHash 
 {
-    fn hash(&self) -> Digest
+    fn hash(&self) -> Result<HashDigest, HashError>;
 }
 
 impl CryptoHash for [u8]
 {
-    fn hash(&self) -> Digest
+    fn hash(&self) -> Result<HashDigest, HashError>
     {
-        let mut context = Context::new(&SHA512);
-        context.update(self);
-        context.finish()
+        let hash = hex_digest(Algorithm::SHA256, self)?;
+        Ok(hex::decode(hash)?)
     }
 }
 

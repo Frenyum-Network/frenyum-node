@@ -28,9 +28,9 @@ impl PrivateKey {
     {
         let secret_key: &SecretKey = &self.0;
         let expanded_secret_key: ExpandedSecretKey = ExpandedSecretKey::from(secret_key);
-        let public_key: PublicKey= (*(expanded_secret_key)).into();
+        let public_key: PublicKey = expanded_secret_key.into();
         let sig = expanded_secret_key.sign(message, &public_key.0);
-        Ed25519Signature(sig)
+        Signature(sig)
     }
 }
 
@@ -44,6 +44,14 @@ impl From<ExpandedSecretKey> for PublicKey
     }
 }
 
+impl From<ed25519_dalek::PublicKey> for PublicKey
+{
+    fn from(public_key: ed25519_dalek::PublicKey) -> Self
+    {
+        PublicKey(public_key)
+    }
+}
+
 impl PublicKey {
     pub const LENGTH: usize = ed25519_dalek::PUBLIC_KEY_LENGTH;
 
@@ -54,11 +62,7 @@ impl PublicKey {
     
     pub fn from_bytes(bytes: &[u8; Self::LENGTH]) -> Result<Self, anyhow::Error>
     {
-    	let pk = PublicKey::from_bytes(bytes)
-    	    .map_err(|_| anyhow::anyhow!("DeserializationError"))?;
-    	    
-    	
-    	Ok(PublicKey(pk))
+        PublicKey::from_bytes(bytes).map_err(|_| anyhow::anyhow!("Failed to create public key"))
     }
 }
 
@@ -72,18 +76,22 @@ impl Signature {
         self.0.to_bytes()
     }
 
-    pub fn verify<T: CryptoHash + Serialize>(
+    pub fn verify<T>(
         &self,
         message: &T,
         public_key: &PublicKey,
-    ) -> Result<(), anyhow::Error> {
-        debug_assert!(public_key.0.validate().is_ok());
-
-        let mut bytes = T::Hasher::seed().to_vec();
+    ) -> Result<(), anyhow::Error>
+    where
+        T: CryptoHash + Serialize + std::hash::BuildHasher,
+    {
+        let mut bytes = Vec::new();
         serialize_into(&mut bytes, &message)
             .map_err(|_| anyhow::anyhow!("SerializationError"))?;
+        
+        let hash = hex_digest(Algorithms::SHA256, &bytes);
+        let hash_bytes = hex::decode(hash)?;
 
-        if public_key.0.verify(&bytes, &self.0).is_ok() {
+        if public_key.0.verify(&hash_bytes, &self.0).is_ok() {
             Ok(())
         } else {
             Err(anyhow::anyhow!("Signature verification failed!"))
