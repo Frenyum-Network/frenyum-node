@@ -1,4 +1,5 @@
-use ring::digest;
+use ring::digest::*;
+
 
 #[derive(PartialEq)]
 struct HashDigest([u8; HashDigest::LENGTH]);
@@ -27,7 +28,7 @@ impl HashDigest
             return Err(HashError::EmptyData);
         }
 
-        let mut hasher = digest::Context::new(&digest::SHA256);        
+        let mut hasher = Context::new(&SHA256);        
         hasher.update(bytes);
         let result = hasher.finish();
 
@@ -80,6 +81,20 @@ impl From<[u8; HashDigest::LENGTH]> for HashDigest
     }
 }
 
+pub trait CryptoHash 
+{
+    fn hash(&self) -> Digest
+}
+
+impl CryptoHash for [u8]
+{
+    fn hash(&self) -> Digest
+    {
+        let mut context = Context::new(&SHA512);
+        context.update(self);
+        context.finish()
+    }
+}
 
 #[cfg(test)]
 mod tests 
