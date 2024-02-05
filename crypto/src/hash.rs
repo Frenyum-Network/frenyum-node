@@ -94,6 +94,7 @@ impl std::fmt::Display for HashError
         {
             HashError::DataTooLong => write!(f, "Data is too long!"),
             HashError::HexError => write!(f, "Hex failed!"),
+            HashError::SerializationError => write!(f, "Serialization failed!"),
             HashError::EmptyData => write!(f, "Data is empty!")
         }
     }

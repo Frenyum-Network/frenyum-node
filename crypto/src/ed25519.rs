@@ -29,7 +29,7 @@ impl PrivateKey {
         let secret_key: &SecretKey = &self.0;
         let expanded_secret_key: ExpandedSecretKey = ExpandedSecretKey::from(secret_key);
         let public_key: PublicKey = expanded_secret_key.into();
-        let sig = expanded_secret_key.sign(message, &public_key.0);
+        let sig = (&expanded_secret_key).sign(message, &public_key.0);
         Signature(sig)
     }
 }
