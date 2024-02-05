@@ -82,14 +82,13 @@ impl Signature {
         public_key: &PublicKey,
     ) -> Result<(), anyhow::Error>
     where
-        T: CryptoHash + Serialize + std::hash::BuildHasher,
+        T: CryptoHash + Serialize,
     {
         let mut bytes = Vec::new();
         serialize_into(&mut bytes, &message)
             .map_err(|_| anyhow::anyhow!("SerializationError"))?;
         
-        let hash = hex_digest(Algorithm::SHA256, &bytes);
-        let hash_bytes = hex::decode(hash)?;
+        let hash_bytes = bytes.hash()?.as_ref();
 
         if public_key.0.verify(&hash_bytes, &self.0).is_ok() {
             Ok(())

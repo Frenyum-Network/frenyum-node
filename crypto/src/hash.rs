@@ -1,8 +1,8 @@
 use ring::digest::*;
-
+use anyhow::Error as AnyhowError;
 
 #[derive(PartialEq)]
-struct HashDigest([u8; HashDigest::LENGTH]);
+pub struct HashDigest(pub [u8; HashDigest::LENGTH]);
 
 #[derive(Debug, PartialEq)]
 pub enum HashError
@@ -99,6 +99,14 @@ impl std::fmt::Display for HashError
     }
 }
 
+impl From<HashError> for AnyhowError
+{
+    fn from(err: HashError) -> Self
+    {
+        AnyhowError::msg(err.to_string())
+    }
+}
+
 impl From<[u8; HashDigest::LENGTH]> for HashDigest
 {
     fn from(bytes: [u8; HashDigest::LENGTH]) -> Self
@@ -110,12 +118,7 @@ impl From<[u8; HashDigest::LENGTH]> for HashDigest
 pub fn hex_digest(algorithm: Algorithm, data: &[u8]) -> Result<HashDigest, HashError>
 {
     match algorithm {
-        Algorithm::SHA256 => {
-            match HashDigest::calculate(data) {
-                Ok(result) => Ok(result),
-                Err(err) => Err(HashError::HexError),
-            }
-        }
+        Algorithm::SHA256 => HashDigest::calculate(data),
     }
 }
 
@@ -129,11 +132,10 @@ impl CryptoHash for [u8]
     fn hash(&self) -> Result<HashDigest, HashError>
     {
         let hash = hex_digest(Algorithm::SHA256, self)?;
-
-        let hash_bytes: Vec<u8> = hex::decode(&hash)
+        let hash_bytes = hex::decode(hash.as_ref())
             .map_err(|_| HashError::HexError)?;
 
-        Ok(HashDigest::from(hash_bytes))
+        Ok(hash_bytes.into())
     }
 }
 
