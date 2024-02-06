@@ -78,6 +78,11 @@ impl PublicKey {
     
     pub fn from_bytes(bytes: &[u8; Self::LENGTH]) -> Result<Self, anyhow::Error>
     {
+        if bytes.len() != Self::LENGTH
+        {
+            return Err(anyhow::anyhow!("Invalid byte array length"));
+        }
+
         PublicKey::from_bytes(bytes).map_err(|_| anyhow::anyhow!("Failed to create public key"))
     }
 }
