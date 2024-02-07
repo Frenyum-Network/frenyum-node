@@ -15,15 +15,19 @@ pub enum HashError
 
 pub enum Algorithm
 {
+    Keccak,
+    SHA3_256,
     SHA256,
+    SHA512,
 }
+
 
 #[allow(dead_code)]
 impl HashDigest 
 {
     pub const LENGTH: usize = 32;
     
-    pub fn calculate(bytes: &[u8]) -> Result<HashDigest, HashError>
+    pub fn calculate(bytes: &[u8], algorithm: Algorithm) -> Result<HashDigest, HashError>
     {   
         if bytes.len() > HashDigest::LENGTH 
         {
@@ -34,13 +38,22 @@ impl HashDigest
         {
             return Err(HashError::EmptyData);
         }
-
-        let mut hasher = Context::new(&SHA256);        
-        hasher.update(bytes);
-        let result = hasher.finish();
-
+        
         let mut hash_digest = [0u8; HashDigest::LENGTH];
-        hash_digest.copy_from_slice(result.as_ref());
+
+        match algorithm 
+        {
+            Algorithm::SHA256 => {
+                // Calculate SHA-256 hash.
+            }
+            Algorithm::SHA512 => {
+                // Calculate SHA-512 hash.
+            }
+            Algorithm::Keccak => {
+                // Calculate Keccak hash.
+            }
+        }
+
         Ok(HashDigest(hash_digest))
     }
 
@@ -119,7 +132,7 @@ impl From<[u8; HashDigest::LENGTH]> for HashDigest
 pub fn hex_digest(algorithm: Algorithm, data: &[u8]) -> Result<HashDigest, HashError>
 {
     match algorithm {
-        Algorithm::SHA256 => HashDigest::calculate(data),
+        Algorithm::SHA256 => HashDigest::calculate(data, Algorithm::SHA256),
     }
 }
 
