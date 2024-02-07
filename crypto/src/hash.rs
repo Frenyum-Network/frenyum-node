@@ -1,3 +1,5 @@
+use anyhow::Error as AnyhowError;
+use tiny_keccak::{Hasher, Sha3};
 use ring::digest::*;
 use anyhow::Error as AnyhowError;
 
@@ -44,7 +46,10 @@ impl HashDigest
         match algorithm 
         {
             Algorithm::SHA256 => {
-                // Calculate SHA-256 hash.
+                let mut context = Conext::new(&SHA256);
+                context.update(bytes);
+                let result = context.finish();
+                hash_digest.copy_from_slice(result.as_ref());
             }
             Algorithm::SHA512 => {
                 // Calculate SHA-512 hash.
