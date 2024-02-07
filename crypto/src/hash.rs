@@ -1,4 +1,3 @@
-use anyhow::Error as AnyhowError;
 use sha3::{Digest, Sha3_256};
 use ring::digest::*;
 use anyhow::Error as AnyhowError;
@@ -13,6 +12,7 @@ pub enum HashError
     SerializationError,
     DataTooLong,
     EmptyData,
+    UnsupportedAlgorithm,
 }
 
 pub enum Algorithm
@@ -59,6 +59,7 @@ impl HashDigest
             Algorithm::Keccak => {
                 let hash_digest: [u8; HashDigest::LENGTH] = Sha3_256::digest(bytes).as_slice().try_into().unwrap();      
             }
+            _ => return Err(HashError::UnsupportedAlgorithm),
         }
 
         Ok(HashDigest(hash_digest))
@@ -115,7 +116,8 @@ impl std::fmt::Display for HashError
             HashError::DataTooLong => write!(f, "Data is too long!"),
             HashError::HexError => write!(f, "Hex failed!"),
             HashError::SerializationError => write!(f, "Serialization failed!"),
-            HashError::EmptyData => write!(f, "Data is empty!")
+            HashError::EmptyData => write!(f, "Data is empty!"),
+            HashError::UnsupportedAlgorithm => write!(f, "Unsupported algorithm!"),
         }
     }
 }
