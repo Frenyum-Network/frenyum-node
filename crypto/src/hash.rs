@@ -57,7 +57,7 @@ impl HashDigest
                 hash_digest.copy_from_slice(result.as_ref());
             }
             Algorithm::Keccak => {
-                // Calculate Keccak hash.
+                let hash_digest: [u8; HashDigest::LENGTH] = Sha3_256::digest(bytes).as_slice().try_into().unwrap();      
             }
         }
 
