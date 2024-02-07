@@ -1,5 +1,5 @@
 use anyhow::Error as AnyhowError;
-use tiny_keccak::{Hasher, Sha3};
+use sha3::{Digest, Sha3_256};
 use ring::digest::*;
 use anyhow::Error as AnyhowError;
 
@@ -18,7 +18,6 @@ pub enum HashError
 pub enum Algorithm
 {
     Keccak,
-    SHA3_256,
     SHA256,
     SHA512,
 }
@@ -46,13 +45,16 @@ impl HashDigest
         match algorithm 
         {
             Algorithm::SHA256 => {
-                let mut context = Conext::new(&SHA256);
+                let mut context = Context::new(&SHA256);
                 context.update(bytes);
                 let result = context.finish();
                 hash_digest.copy_from_slice(result.as_ref());
             }
             Algorithm::SHA512 => {
-                // Calculate SHA-512 hash.
+                let mut context = Context::new(&SHA512);
+                context.update(bytes);
+                let result = context.finish();
+                hash_digest.copy_from_slice(result.as_ref());
             }
             Algorithm::Keccak => {
                 // Calculate Keccak hash.
