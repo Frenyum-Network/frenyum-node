@@ -142,6 +142,8 @@ pub fn hex_digest(algorithm: Algorithm, data: &[u8]) -> Result<HashDigest, HashE
 {
     match algorithm {
         Algorithm::SHA256 => HashDigest::calculate(data, Algorithm::SHA256),
+        Algorithm::Keccak => HashDigest::calculate(data, Algorithm::Keccak),
+        Algorithm::SHA512 => HashDigest::calculate(data, Algorithm::SHA512),
     }
 }
 
