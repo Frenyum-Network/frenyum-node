@@ -49,20 +49,22 @@ impl HashDigest
                 context.update(bytes);
                 let result = context.finish();
                 hash_digest.copy_from_slice(result.as_ref());
+                Ok(HashDigest(hash_digest))
             }
             Algorithm::SHA512 => {
                 let mut context = Context::new(&SHA512);
                 context.update(bytes);
                 let result = context.finish();
                 hash_digest.copy_from_slice(result.as_ref());
+                Ok(HashDigest(hash_digest))
             }
-            Algorithm::Keccak => {
-                let hash_digest: [u8; HashDigest::LENGTH] = Sha3_256::digest(bytes).as_slice().try_into().unwrap();      
+            Algorithm::Keccak =>
+            {
+                 let hash_digest: [u8; HashDigest::LENGTH] = Sha3_256::digest(bytes).into();
+                 Ok(HashDigest(hash_digest))
             }
             _ => return Err(HashError::UnsupportedAlgorithm),
         }
-
-        Ok(HashDigest(hash_digest))
     }
 
     pub fn eq(&self, hash: &HashDigest) -> bool
@@ -170,22 +172,24 @@ mod tests
     use super::*;
 
     #[test]
-    fn test_calculate_hash()
+    fn test_keccak_calculate_hash()
     {
-        let hashv1 = HashDigest::calculate(b"FRENYUM");
-        let hashv2 = [0xF0, 0xD2, 0x36, 0x19, 0x3D, 0xDE, 0x9D, 0xA8, 0x13, 0x37, 0x98, 0xBD, 0xDA, 0xDC, 0x17, 0x66,
-0x59, 0x42, 0x54, 0xD3, 0x56, 0xB0, 0x01, 0x37, 0x62, 0x03, 0x3C, 0xC2, 0x6A, 0xF7, 0xD1, 0x06,
+        let hashv1 = HashDigest::calculate(b"FRENYUM", Algorithm::Keccak);
+        let hashv2 = [
+         0x32, 0x1A, 0x2C, 0xBA, 0xE1, 0x4F, 0xD6, 0x2C, 0x8B, 0xD9, 0x82, 0x83, 0x75, 0x8A, 0x38, 0xBD,
+         0xB6, 0x0F, 0xD1, 0x06, 0x10, 0x97, 0xF0, 0xA4, 0x50, 0x13, 0x38, 0x6A, 0x7F, 0x3D, 0x2B, 0x2B,
         ];
+
         
         assert_eq!(hashv1, Ok(HashDigest::from(hashv2)));
     }
 
     #[test]
-    fn test_eq_hash()
+    fn test_keccak_eq_hash()
     {
-        let hashv1 = HashDigest::calculate(b"FRENYUM");
-        let hashv2 = HashDigest::calculate(b"FRENYUM");
-        let hashv3 = HashDigest::calculate(b"NOT_EQ");
+        let hashv1 = HashDigest::calculate(b"FRENYUM", Algorithm::Keccak);
+        let hashv2 = HashDigest::calculate(b"FRENYUM", Algorithm::Keccak);
+        let hashv3 = HashDigest::calculate(b"NOT_EQ", Algorithm::Keccak);
 
         assert_eq!(hashv1, hashv2);
         assert_ne!(hashv1, hashv3);
