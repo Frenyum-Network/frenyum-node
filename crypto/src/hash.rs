@@ -195,6 +195,31 @@ mod tests
         assert_ne!(hashv1, hashv3);
     }
 
+    #[test]
+    fn test_sha256_calculate_hash()
+    {
+        let hashv1 = HashDigest::calculate(b"FRENYUM", Algorithm::SHA256);
+        let hashv2 =  [
+        0xF0, 0xD2, 0x36, 0x19, 0x3D, 0xDE, 0x9D, 0xA8, 0x13, 0x37, 0x98, 0xBD, 0xDA, 0xDC,
+        0x17, 0x66, 0x59, 0x42, 0x54, 0xD3, 0x56, 0xB0, 0x01, 0x37, 0x62, 0x03, 0x3C, 0xC2,
+        0x6A, 0xF7, 0xD1, 0x06
+        ];
+
+        assert_eq!(hashv1, Ok(HashDigest::from(hashv2)));
+    }
+    
+    #[test]
+    fn test_sha256_eq_hash()
+    {
+        let hashv1 = HashDigest::calculate(b"FRENYUM", Algorithm::SHA256);
+        let hashv2 = HashDigest::calculate(b"FRENYUM", Algorithm::SHA256);
+        let hashv3 = HashDigest::calculate(b"NOT_EQ", Algorithm::SHA256);
+
+        assert_eq!(hashv1, hashv2);
+        assert_ne!(hashv2, hashv3);
+
+    }
+
 }
 
 
