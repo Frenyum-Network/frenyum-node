@@ -61,9 +61,9 @@ impl std::ops::Sub<Timestamp> for Timestamp
 {
     type Output = Timestamp;
 
-    fn sub(self, rhs: Timestamp) -> Timestamp
+    fn sub(self, other: Timestamp) -> Timestamp
     {
-        Timestamp(self.0 - rhs.0)
+        Timestamp(self.0 - other.0)
     }
 }
 
@@ -71,25 +71,25 @@ impl std::ops::Add<u64> for Timestamp
 {
     type Output = Timestamp;
 
-    fn add(self, rhs: u64) -> Timestamp
+    fn add(self, other: u64) -> Timestamp
     {
-        Timestamp(self.0 + rhs)
+        Timestamp(self.0 + other)
     }
 }
 
 impl std::ops::AddAssign<u64> for Timestamp
 {
-    fn add_assign(&mut self, rhs: u64)
+    fn add_assign(&mut self, other: u64)
     {
-        self.0 += rhs;
+        self.0 += other;
     }
 }
 
 impl std::ops::SubAssign<u64> for Timestamp
 {
-    fn sub_assign(&mut self, rhs: u64)
+    fn sub_assign(&mut self, other: u64)
     {
-        self.0 -= rhs;
+        self.0 -= other;
     }
 }
 
