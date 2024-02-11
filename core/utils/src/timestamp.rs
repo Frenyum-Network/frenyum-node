@@ -8,7 +8,7 @@ impl Timestamp
 {
     pub const MAX: Timestamp = Timestamp(u64::MAX);
 
-    pub fn now(timestamp: u64) -> Self 
+    pub fn now() -> Self 
     {
         let start = SystemTime::now();
         let since_the_epoch = start.duration_since(UNIX_EPOCH).expect("Time went backwards");
@@ -22,7 +22,7 @@ impl Timestamp
     
     pub fn elapsed(&self) -> u64
     {
-        let now = Timestamp::now(0);
+        let now = Timestamp::now();
         now.0 - self.0
     }
 }
