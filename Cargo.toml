@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "core/primvites",
+    "core/crypto",
     "core/utils",
 ]
 
