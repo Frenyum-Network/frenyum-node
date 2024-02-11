@@ -1,4 +1,5 @@
 use crate::crypto::HashDigest;
+use crate::utils::Timestamp;
 
 pub struct BlockHeader
 {
@@ -7,7 +8,7 @@ pub struct BlockHeader
     // Block Number
     // Difficulty
     hash: HashDigest,
-    // Timestamp
+    timestamp: Timestamp,
     // Nonce
     // Total Difficulty
     // Gas Price
