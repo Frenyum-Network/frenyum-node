@@ -1,6 +1,8 @@
+use crate::core::primvites::BlockHeader;
+
 pub struct FinalizeBlock
 {
-    // Block Header
+    header: BlockHeader,
     // Transaction 
     // Validator
 }
