@@ -1,10 +1,12 @@
+use crate::crypto::HashDigest;
+
 pub struct BlockHeader
 {
     // Version
     // Parent Hash
     // Block Number
     // Difficulty
-    // Block Hash
+    hash: HashDigest,
     // Timestamp
     // Nonce
     // Total Difficulty
