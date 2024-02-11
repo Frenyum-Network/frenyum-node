@@ -1,8 +1,17 @@
-workspace = { members = ["core/primvites", "core/utils"] }
+[workspace]
+members = [
+    "core/primvites",
+    "core/utils",
+]
+
 [package]
 name = "frenyum-node"
 version = "0.1.0"
 edition = "2021"
+
+[[bin]]
+name = "frenyum-node"
+path = "frenyum/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
