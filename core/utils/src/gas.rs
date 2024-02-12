@@ -1,3 +1,5 @@
+use std::ops::{Add, Sub, Mul, Div};
+
 pub struct Gas(u64);
 
 impl Gas
@@ -75,7 +77,7 @@ mod tests {
         let initial_gas = Gas::new(1000);
         let additional_gas = Gas::new(500);
 
-        let result_gas = initial_gas.add(additional_gas);
+        let result_gas = initial_gas.add(additional_gas.amount());
 
         assert_eq!(result_gas.amount(), 1500);
     }
