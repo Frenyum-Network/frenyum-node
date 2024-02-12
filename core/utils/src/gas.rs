@@ -48,11 +48,67 @@ impl std::ops::Div<Gas> for Gas
 
     fn div(self, other: Gas) -> Gas
     {
-        if other.0 != 0
+        if other.0 != 0      
         {
             Gas(self.0 / other.0)
         } else {
             Gas(0)
         }
+    }
+}
+
+impl From<u64> for Gas
+{
+    fn from(amount: u64) -> Gas
+    {
+        Gas(amount)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_gas_allocation() 
+    {
+        let initial_gas = Gas::new(1000);
+        let additional_gas = Gas::new(500);
+
+        let result_gas = initial_gas.add(additional_gas);
+
+        assert_eq!(result_gas.amount(), 1500);
+    }
+
+    #[test]
+    fn test_gas_consumption() 
+    {
+        let initial_gas = Gas::new(1000);
+        let consumed_gas = Gas::new(700);
+
+        let result_gas = initial_gas.sub(consumed_gas);
+
+        assert_eq!(result_gas.amount(), 300);
+    }
+
+    #[test]
+    fn test_gas_multiplication() 
+    {
+        let gas1 = Gas::new(100);
+        let gas2 = Gas::new(5);
+
+        let result_gas = gas1.mul(gas2);
+
+        assert_eq!(result_gas.amount(), 500);
+    }
+
+    #[test]
+    fn test_gas_division() {
+        let initial_gas = Gas::new(1000);
+        let divisor_gas = Gas::new(200);
+
+        let result_gas = initial_gas.div(divisor_gas);
+
+        assert_eq!(result_gas.amount(), 5);
     }
 }
