@@ -1,4 +1,4 @@
-use crate::core::primvites::BlockHeader;
+use crate::block_header::BlockHeader;
 
 pub struct FinalizeBlock
 {

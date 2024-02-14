@@ -4,7 +4,7 @@ use crate::{BlockNumber, BlockHeight, U256};
 
 pub struct BlockHeader
 {
-    protocol_version: u64,
+    protocol_version: u32,
     parent_hash: HashDigest,
     block_number: BlockNumber,
     block_height: BlockHeight,

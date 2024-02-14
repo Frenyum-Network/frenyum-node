@@ -1,6 +1,7 @@
 use std::ops::{Add, Sub, Mul, Div};
+use ethereum_types::U256;
 
-pub struct Gas(u64);
+pub struct Gas(U256);
 
 impl Gas
 {
@@ -105,7 +106,8 @@ mod tests {
     }
 
     #[test]
-    fn test_gas_division() {
+    fn test_gas_division() 
+    {
         let initial_gas = Gas::new(1000);
         let divisor_gas = Gas::new(200);
 
