@@ -1,7 +1,6 @@
-use super::crypto::hash::HashDigest;
-use crate::utils::gas::Gas;
-use crate::utils::timestamp::Timestamp;
-
+use crypto::hash::HashDigest;
+use utils::gas::Gas;
+use utils::timestamp::Timestamp;
 use crate::BlockNumber;
 use crate::BlockHeight;
 
