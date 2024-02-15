@@ -152,4 +152,35 @@ impl BlockHeaderBuilder
         self.transaction_root = Some(transaction_root);
         self
     }
+
+    pub fn build(&self) -> Result<BlockHeader, &'static str>
+    {
+        let hash = self.hash.ok_or("Hash is missing")?;
+        let protocol_version = self.protocol_version.ok_or("Protocol version is missing")?;
+        let parent_hash = self.parent_hash.ok_or("Parent hash is missing")?;
+        let block_number = self.block_number.ok_or("Block number is missing")?;
+        let block_height = self.block_height.ok_or("Block height is missing")?;
+        let difficulty = self.difficulty.ok_or("Difficulty is missing")?;
+        let timestamp = self.timestamp.ok_or("Timestamp is missing")?;
+        let nonce = self.nonce.ok_or("Nonce is missing")?;
+        let total_difficulty = self.total_difficulty.ok_or("Total difficulty is missing")?;
+        let gas_used = self.gas_used.ok_or("Gas used is missing")?;
+        let gas_limit = self.gas_limit.ok_or("Gas limit is missing")?;
+        let transaction_root = self.transaction_root.ok_or("Transaction root is missing")?;
+
+        Ok(BlockHeader {
+            hash: hash,
+            protocol_version,
+            parent_hash: parent_hash,
+            block_number,
+            block_height,
+            difficulty: difficulty,
+            timestamp: timestamp,
+            nonce: nonce,
+            total_difficulty: total_difficulty,
+            gas_used: gas_used,
+            gas_limit: gas_limit,
+            transaction_root: transaction_root,
+        })
+    }
 }
