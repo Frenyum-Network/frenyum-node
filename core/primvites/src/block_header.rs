@@ -44,3 +44,20 @@ impl BlockHeader
 
     pub fn transaction_root(&self) -> &HashDigest { &self.transaction_root }
 }
+
+pub struct BlockHeaderBuilder 
+{
+    hash: HashDigest,
+    protocol_version: u32,
+    parent_hash: HashDigest,
+    block_number: BlockNumber,
+    block_height: BlockHeight,
+    difficulty: U256,
+    timestamp: Timestamp,
+    nonce: U256,
+    total_difficulty: U256,
+    gas_used: Gas,
+    gas_limit: Gas,
+    transaction_root: HashDigest,
+}
+
