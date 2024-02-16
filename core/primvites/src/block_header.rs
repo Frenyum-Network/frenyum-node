@@ -61,6 +61,22 @@ pub struct BlockHeaderBuilder
     transaction_root: Option<HashDigest>,
 }
 
+pub enum BuilderError
+{
+    HashMissing,
+    ProtocolVersionMissing,
+    ParentHashMissing,
+    BlockNumberMissing,
+    BlockHeightMissing,
+    DifficultyMissing,
+    TimestampMissing,
+    NonceMissing,
+    TotalDifficultyMissing,
+    GasUsedMissing,
+    GasLimitMissing,
+    TransactionRootMissing,
+}
+
 impl BlockHeaderBuilder
 {
     pub fn new() -> Self
@@ -153,20 +169,20 @@ impl BlockHeaderBuilder
         self
     }
 
-    pub fn build(&self) -> Result<BlockHeader, &'static str>
+    pub fn build(&self) -> Result<BlockHeader, BuilderError>
     {
-        let hash = self.hash.ok_or("Hash is missing")?;
-        let protocol_version = self.protocol_version.ok_or("Protocol version is missing")?;
-        let parent_hash = self.parent_hash.ok_or("Parent hash is missing")?;
-        let block_number = self.block_number.ok_or("Block number is missing")?;
-        let block_height = self.block_height.ok_or("Block height is missing")?;
-        let difficulty = self.difficulty.ok_or("Difficulty is missing")?;
-        let timestamp = self.timestamp.ok_or("Timestamp is missing")?;
-        let nonce = self.nonce.ok_or("Nonce is missing")?;
-        let total_difficulty = self.total_difficulty.ok_or("Total difficulty is missing")?;
-        let gas_used = self.gas_used.ok_or("Gas used is missing")?;
-        let gas_limit = self.gas_limit.ok_or("Gas limit is missing")?;
-        let transaction_root = self.transaction_root.ok_or("Transaction root is missing")?;
+        let hash = self.hash.ok_or(BuilderError::HashMissing)?;
+        let protocol_version = self.protocol_version.ok_or(BuilderError::ProtocolVersionMissing)?;
+        let parent_hash = self.parent_hash.ok_or(BuilderError::ParentHashMissing)?;
+        let block_number = self.block_number.ok_or(BuilderError::BlockNumberMissing)?;
+        let block_height = self.block_height.ok_or(BuilderError::BlockHeightMissing)?;
+        let difficulty = self.difficulty.ok_or(BuilderError::DifficultyMissing)?;
+        let timestamp = self.timestamp.ok_or(BuilderError::TimestampMissing)?;
+        let nonce = self.nonce.ok_or(BuilderError::NonceMissing)?;
+        let total_difficulty = self.total_difficulty.ok_or(BuilderError::TotalDifficultyMissing)?;
+        let gas_used = self.gas_used.ok_or(BuilderError::GasUsedMissing)?;
+        let gas_limit = self.gas_limit.ok_or(BuilderError::GasLimitMissing)?;
+        let transaction_root = self.transaction_root.ok_or(BuilderError::TransactionRootMissing)?;
 
         Ok(BlockHeader {
             hash: hash,
@@ -183,4 +199,21 @@ impl BlockHeaderBuilder
             transaction_root: transaction_root,
         })
     }
+    
+    pub fn clear(&mut self)
+    {
+        self.hash = None;
+        self.protocol_version = None;
+        self.parent_hash = None;
+        self.block_number = None;
+        self.block_height = None;
+        self.difficulty = None;
+        self.timestamp = None;
+        self.nonce = None;
+        self.total_difficulty = None;
+        self.gas_used = None;
+        self.gas_limit = None;
+        self.transaction_root = None;
+    }
+    
 }
