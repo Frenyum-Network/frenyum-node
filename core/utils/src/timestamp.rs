@@ -3,6 +3,7 @@ use chrono::{DateTime, Utc};
 use std::fmt;
 use std::str::FromStr;
 
+#[derive(Debug, Clone, Copy)]
 pub struct Timestamp(u64);
 
 impl Timestamp

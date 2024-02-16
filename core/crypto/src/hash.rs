@@ -2,7 +2,7 @@ use sha3::{Digest, Sha3_256};
 use ring::digest::*;
 use anyhow::Error as AnyhowError;
 
-#[derive(PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct HashDigest(pub [u8; HashDigest::LENGTH]);
 
 #[derive(Debug, PartialEq)]

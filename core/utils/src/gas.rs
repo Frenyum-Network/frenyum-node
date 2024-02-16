@@ -1,7 +1,7 @@
 use std::ops::{Add, Sub, Mul, Div};
-use ethereum_types::U256;
 
-pub struct Gas(U256);
+#[derive(Debug, Clone, Copy)]
+pub struct Gas(u64);
 
 impl Gas
 {
