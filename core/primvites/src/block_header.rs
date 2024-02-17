@@ -37,18 +37,7 @@ impl BlockHeader
     pub fn nonce(&self) -> &U256 { &self.nonce }
 
     pub fn total_difficulty(&self) -> &U256 { &self.total_difficulty }
-    hash: HashDigest,
-    protocol_version: u32,
-    parent_hash: HashDigest,
-    block_number: BlockNumber,
-    block_height: BlockHeight,
-    difficulty: U256,
-    timestamp: Timestamp,
-    nonce: U256,
-    total_difficulty: U256,
-    gas_used: Gas,
-    gas_limit: Gas,
-    transaction_root: HashDigest,
+
     pub fn gas_used(&self) -> &Gas { &self.gas_used }
 
     pub fn gas_limit(&self) -> &Gas { &self.gas_limit }
@@ -130,7 +119,7 @@ impl BlockHeaderBuilder
     }
 
     pub fn set_block_number(&mut self, number: BlockNumber) -> &mut Self
-    {
+    {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
         self.block_number = number;
         self
     }
