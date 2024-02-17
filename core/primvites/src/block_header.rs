@@ -119,7 +119,7 @@ impl BlockHeaderBuilder
     }
 
     pub fn set_block_number(&mut self, number: BlockNumber) -> &mut Self
-    {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
+    {
         self.block_number = number;
         self
     }
@@ -184,8 +184,8 @@ impl BlockHeaderBuilder
             (self.timestamp.as_ref(), "Timestamp"),
             (self.nonce.as_ref(), "Nonce"),
             (self.total_difficulty.as_ref(), "Total difficulty"),
-            (self.gas_used.as_ref(), "Gas used"),
-            (self.gas_limit.as_ref(), "Gas limit"),
+            (self.gas_used, "Gas used"),
+            (self.gas_limit, "Gas limit"),
             (self.transaction_root.as_ref(), "Transaction root"),
         ];
 
