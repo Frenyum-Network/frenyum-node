@@ -1,6 +1,6 @@
 use std::ops::{Add, Sub, Mul, Div};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct Gas(u64);
 
 impl Gas

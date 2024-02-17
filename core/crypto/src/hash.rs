@@ -1,8 +1,9 @@
 use sha3::{Digest, Sha3_256};
 use ring::digest::*;
 use anyhow::Error as AnyhowError;
+use std::default::Default;
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Default)]
 pub struct HashDigest(pub [u8; HashDigest::LENGTH]);
 
 #[derive(Debug, PartialEq)]
