@@ -1,6 +1,6 @@
 use std::ops::{Add, Sub, Mul, Div};
 
-#[derive(Debug, Clone, Copy, Default)]
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub struct Gas(u64);
 
 impl Gas
@@ -9,6 +9,15 @@ impl Gas
 
    pub fn amount(&self) -> u64 { self.0 }
 }
+
+impl AsRef<u64> for Gas
+{
+    fn as_ref(&self) -> &u64
+    {
+        &self.0
+    }
+}
+
 
 impl std::ops::Sub<Gas> for Gas
 {
