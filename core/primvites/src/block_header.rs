@@ -45,6 +45,8 @@ impl BlockHeader
     pub fn transaction_root(&self) -> &HashDigest { &self.transaction_root }
 }
 
+
+
 pub struct BlockHeaderBuilder 
 {
     hash: HashDigest,
@@ -59,6 +61,27 @@ pub struct BlockHeaderBuilder
     gas_used: Gas,
     gas_limit: Gas,
     transaction_root: HashDigest,
+}
+
+impl Default for BlockHeader
+{
+    fn default() -> Self 
+    {
+        Self {
+            hash: Default::default(),
+            protocol_version: 0,
+            parent_hash: Default::default(),
+            block_number: 0,
+            block_height: 0,
+            difficulty: Default::default(),
+            timestamp: Default::default(),
+            nonce: Default::default(),
+            total_difficulty: Default::default(),
+            gas_used: Default::default(),
+            gas_limit: Default::default(),
+            transaction_root: Default::default(),
+        }
+    }
 }
 
 impl BlockHeaderBuilder
@@ -168,6 +191,7 @@ impl BlockHeaderBuilder
         let gas_limit = self.gas_limit;
         let transaction_root = self.transaction_root;
 
+        
         BlockHeader {
             hash,
             protocol_version,
@@ -182,22 +206,65 @@ impl BlockHeaderBuilder
             gas_limit,
             transaction_root,
         }
-    }
+    } 
+}
+
+#[cfg(test)]
+mod test
+{
+    use super::*;
     
-    pub fn clear(&mut self)
+    #[test]
+    fn test_block_header_builder()
     {
-        self.hash = Default::default();
-        self.protocol_version = 0;
-        self.parent_hash = Default::default();
-        self.block_number = 0;
-        self.block_height = 0;
-        self.difficulty = Default::default();
-        self.timestamp = Default::default();
-        self.nonce = Default::default();
-        self.total_difficulty = Default::default();
-        self.gas_used = Default::default();
-        self.gas_limit = Default::default();
-        self.transaction_root = Default::default();
+        let hash = HashDigest::default();
+        let protocol_version = 1;
+        let parent_hash = HashDigest::default();
+        let block_number = 123;
+        let block_height = 456;
+        let difficulty = U256::from(1000);
+        let timestamp = Timestamp::now();
+        let nonce = U256::from(12345);
+        let total_difficulty = U256::from(5000);
+        let gas_used = Gas::new(100);
+        let gas_limit = Gas::new(1000);
+        let transaction_root = HashDigest::default();
+
+        let header = BlockHeaderBuilder::new()
+            .set_hash(hash.clone())
+            .set_protocol_version(protocol_version)
+            .set_parent_hash(parent_hash.clone())
+            .set_block_number(block_number)
+            .set_block_height(block_height)
+            .set_difficulty(difficulty.clone())
+            .set_timestamp(timestamp.clone())
+            .set_nonce(nonce.clone())
+            .set_total_difficulty(total_difficulty.clone())
+            .set_gas_used(gas_used.clone())
+            .set_gas_limit(gas_limit.clone())
+            .set_transaction_root(transaction_root.clone())
+            .build();
+
+        assert_eq!(header.hash(), &hash);
+        assert_eq!(header.protocol_version(), protocol_version);
+        assert_eq!(header.parent_hash(), &parent_hash);
+        assert_eq!(header.block_number(), block_number);
+        assert_eq!(header.block_height(), block_height);
+        assert_eq!(header.difficulty(), &difficulty);
+        assert_eq!(header.timestamp(), &timestamp);
+        assert_eq!(header.nonce(), &nonce);
+        assert_eq!(header.total_difficulty(), &total_difficulty);
+        assert_eq!(header.gas_used(), &gas_used);
+        assert_eq!(header.gas_limit(), &gas_limit);
+        assert_eq!(header.transaction_root(), &transaction_root);
     }
     
+    #[test]
+    fn test_block_header_default_values()
+    {
+        let header = BlockHeader::default();
+        assert_eq!(header.hash(), &HashDigest::default());
+        assert_eq!(header.protocol_version(), 0);
+        assert_eq!(header.parent_hash(), &HashDigest::default());
+    }
 }
