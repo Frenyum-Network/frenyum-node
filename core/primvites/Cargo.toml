@@ -9,3 +9,7 @@ edition = "2021"
 utils = { path = "../utils" }
 crypto = { path = "../crypto" }
 ethereum-types = "0.14.1"
+
+[[bench]]
+name = "model_bench"
+harness = false
