@@ -122,3 +122,7 @@ impl Signature {
     }
 }
 
+mod test {
+    use super::*;
+    use crate::hash::HashDigest;
+}
