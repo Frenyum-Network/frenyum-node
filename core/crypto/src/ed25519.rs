@@ -1,7 +1,7 @@
 extern crate ed25519_dalek;
 
 use std::convert::TryFrom;
-use rand::RngCore;
+use rand::rngs::OsRng;
 use ed25519_dalek::*;
 use anyhow::Result;
 use crate::hash::*;
@@ -16,7 +16,7 @@ impl PrivateKey {
 
     pub fn generate() -> Self 
     {
-        let mut csprng = rand::thread_rng();
+        let mut csprng = OsRng;
         let secret_key = ed25519_dalek::SecretKey::generate(&mut csprng);
         PrivateKey(secret_key)
     }
@@ -35,9 +35,10 @@ impl PrivateKey {
     pub fn sign_message(&self, message: &[u8]) -> Signature 
     {
         let secret_key: &SecretKey = &self.0;
-        let signer = Signer::from_secret_key(secret_key);
-        let sign = signer.sign(message);
-        
+        let expanded_secret_key: ExpandedSecretKey = ExpandedSecretKey::from(secret_key);
+        let public_key: PublicKey = self.into();
+        let sign = expanded_secret_key.sign(message, &public_key.0);
+
         Signature(sign)
     }
 }
@@ -46,7 +47,15 @@ impl From<&PrivateKey> for PublicKey
 {
     fn from(private_key: &PrivateKey) -> Self 
     {
-        PublicKey(PublicKey::from(&private_key.0))
+        PublicKey(ed25519_dalek::PublicKey::from(&private_key.0))
+    }
+}
+
+impl From<ExpandedSecretKey> for PublicKey 
+{
+    fn from(expanded_secret_key: ExpandedSecretKey) -> Self
+    {
+        PublicKey(ed25519_dalek::PublicKey::from(&expanded_secret_key))
     }
 }
 
@@ -54,12 +63,12 @@ impl From<&ed25519_dalek::SecretKey> for PublicKey
 {
     fn from(secret_key: &ed25519_dalek::SecretKey) -> Self
     {
-        PublicKey::from(secret_key)
+        PublicKey::from(ExpandedSecretKey::from(secret_key))
     }
 }
 
 #[derive(PartialEq, Debug)]
-pub struct PublicKey(RingPublicKey);
+pub struct PublicKey(ed25519_dalek::PublicKey);
 
 impl PublicKey {
     pub const LENGTH: usize = ed25519_dalek::PUBLIC_KEY_LENGTH;
