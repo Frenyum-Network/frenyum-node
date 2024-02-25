@@ -1,12 +1,13 @@
 extern crate ed25519_dalek;
 
 use std::convert::TryFrom;
-use rand::rngs::OsRng;
+use rand::RngCore;
 use ed25519_dalek::*;
 use anyhow::Result;
 use crate::hash::*;
 use serde::Serialize;
 use bincode::serialize_into;
+use ring::agreement::PublicKey as RingPublicKey;
 
 pub struct PrivateKey(ed25519_dalek::SecretKey);
 
@@ -15,7 +16,7 @@ impl PrivateKey {
 
     pub fn generate() -> Self 
     {
-        let mut csprng = OsRng;
+        let mut csprng = rand::thread_rng();
         let secret_key = ed25519_dalek::SecretKey::generate(&mut csprng);
         PrivateKey(secret_key)
     }
@@ -34,9 +35,8 @@ impl PrivateKey {
     pub fn sign_message(&self, message: &[u8]) -> Signature 
     {
         let secret_key: &SecretKey = &self.0;
-        let expanded_secret_key: ExpandedSecretKey = ExpandedSecretKey::from(secret_key);
-        let public_key: PublicKey = self.into();
-        let sign = expanded_secret_key.sign(message, &public_key.0);
+        let signer = Signer::from_secret_key(secret_key);
+        let sign = signer.sign(message);
         
         Signature(sign)
     }
@@ -46,15 +46,7 @@ impl From<&PrivateKey> for PublicKey
 {
     fn from(private_key: &PrivateKey) -> Self 
     {
-        PublicKey(ed25519_dalek::PublicKey::from(&private_key.0))
-    }
-}
-
-impl From<ExpandedSecretKey> for PublicKey 
-{
-    fn from(expanded_secret_key: ExpandedSecretKey) -> Self
-    {
-        PublicKey(ed25519_dalek::PublicKey::from(&expanded_secret_key))
+        PublicKey(PublicKey::from(&private_key.0))
     }
 }
 
@@ -62,11 +54,12 @@ impl From<&ed25519_dalek::SecretKey> for PublicKey
 {
     fn from(secret_key: &ed25519_dalek::SecretKey) -> Self
     {
-        PublicKey::from(ExpandedSecretKey::from(secret_key))
+        PublicKey::from(secret_key)
     }
 }
 
-pub struct PublicKey(ed25519_dalek::PublicKey);
+#[derive(PartialEq, Debug)]
+pub struct PublicKey(RingPublicKey);
 
 impl PublicKey {
     pub const LENGTH: usize = ed25519_dalek::PUBLIC_KEY_LENGTH;
@@ -125,4 +118,28 @@ impl Signature {
 mod test {
     use super::*;
     use crate::hash::HashDigest;
+
+    #[test]
+    fn test_private_key_generate_creates_valid_key()
+    {
+        let private_key = PrivateKey::generate();
+        assert_eq!(private_key.0.to_bytes().len(), PrivateKey::LENGTH);
+    }
+
+    #[test]
+    fn test_private_key_to_public_key_conversion()
+    {
+        let private_key = PrivateKey::generate();
+        let public_key = private_key.to_public_key();
+    }
+
+    #[test]
+    fn test_public_key_from_bytes_serialization()
+    {
+        let private_key = PrivateKey::generate();
+        let public_key = private_key.to_public_key();
+        let bytes = public_key.to_bytes();
+        let deserialized_public_key = PublicKey::from_bytes(&bytes).unwrap();
+        assert_eq!(public_key, deserialized_public_key);
+    }
 }
