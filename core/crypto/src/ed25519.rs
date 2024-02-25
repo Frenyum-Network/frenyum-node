@@ -89,8 +89,7 @@ impl PublicKey {
     }
 }
 
-
-
+#[derive(PartialEq, Debug)]
 pub struct Signature(ed25519_dalek::Signature);
 
 impl Signature {
@@ -101,13 +100,27 @@ impl Signature {
         self.0.to_bytes()
     }
 
+    pub fn from_bytes(bytes: &[u8; Self::LENGTH]) -> Result<Self, anyhow::Error>
+    {
+        if bytes.len() != Self::LENGTH
+        {
+            return Err(anyhow::anyhow!("Invalid byte array length"));
+        }
+
+        let signature_bytes = bytes.to_vec();
+        let signature = ed25519_dalek::Signature::from_bytes(&signature_bytes)
+            .map_err(|_| anyhow::anyhow!("Failed to create signature"))?;
+
+        Ok(Signature(signature))
+    }
+
     pub fn verify<T>(
         &self,
         message: &T,
         public_key: &PublicKey,
     ) -> Result<(), anyhow::Error>
     where
-        T: CryptoHash + Serialize,
+        T: CryptoHash + Serialize + ?Sized,
     {
         let mut bytes = Vec::new();
         serialize_into(&mut bytes, &message)
@@ -150,5 +163,37 @@ mod test {
         let bytes = public_key.to_bytes();
         let deserialized_public_key = PublicKey::from_bytes(&bytes).unwrap();
         assert_eq!(public_key, deserialized_public_key);
+    }
+
+    #[test]
+    fn test_public_key_from_bytes_invalid_input()
+    {
+        let mut invalid_bytes = [0u8; PublicKey::LENGTH];
+        invalid_bytes[0] = 1;
+        let result = PublicKey::from_bytes(&invalid_bytes);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_signature_to_bytes_serialization()
+    {
+        let private_key = PrivateKey::generate();
+        let message = "FRENYUM";
+        let signature = private_key.sign_message(message.as_bytes());
+        let bytes = signature.to_bytes();
+        let restored_signature = Signature::from_bytes(&bytes).unwrap();
+        assert_eq!(signature, restored_signature);
+    }
+
+    #[test]
+    fn test_signature_verify()
+    {
+        let private_key = PrivateKey::generate();
+        let message = "FRENYUM_OK"; 
+        let signature = private_key.sign_message(message.as_bytes());
+
+        let public_key = private_key.to_public_key();
+
+        assert!(signature.verify(message.as_bytes(), &public_key).is_ok());
     }
 }
