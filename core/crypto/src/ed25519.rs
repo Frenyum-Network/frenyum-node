@@ -1,7 +1,7 @@
 extern crate ed25519_dalek;
 
 use std::convert::TryFrom;
-use rand::rngs::OsRng;
+use rand::rngs::ThreadRng;
 use ed25519_dalek::*;
 use anyhow::Result;
 use crate::hash::*;
@@ -14,10 +14,9 @@ pub struct PrivateKey(ed25519_dalek::SecretKey);
 impl PrivateKey {
     pub const LENGTH: usize = ed25519_dalek::SECRET_KEY_LENGTH;
 
-    pub fn generate() -> Self 
+    pub fn generate(rng: &mut rand::rngs::ThreadRng) -> Self 
     {
-        let mut csprng = OsRng;
-        let secret_key = ed25519_dalek::SecretKey::generate(&mut csprng);
+        let secret_key = ed25519_dalek::SecretKey::generate(rng);
         PrivateKey(secret_key)
     }
 
@@ -139,26 +138,30 @@ impl Signature {
 
 mod test {
     use super::*;
+    use rand::rngs::ThreadRng;
     use crate::hash::HashDigest;
 
     #[test]
     fn test_private_key_generate_creates_valid_key()
     {
-        let private_key = PrivateKey::generate();
+        let mut csprng: ThreadRng = thread_rng();
+        let private_key = PrivateKey::generate(&mut csprng);
         assert_eq!(private_key.0.to_bytes().len(), PrivateKey::LENGTH);
     }
 
     #[test]
     fn test_private_key_to_public_key_conversion()
     {
-        let private_key = PrivateKey::generate();
+        let mut csprng: ThreadRng = thread_rng();
+        let private_key = PrivateKey::generate(&mut csprng);
         let public_key = private_key.to_public_key();
     }
 
     #[test]
     fn test_public_key_from_bytes_serialization()
     {
-        let private_key = PrivateKey::generate();
+        let mut csprng: ThreadRng = thread_rng();
+        let private_key = PrivateKey::generate(&mut csprng);
         let public_key = private_key.to_public_key();
         let bytes = public_key.to_bytes();
         let deserialized_public_key = PublicKey::from_bytes(&bytes).unwrap();
@@ -177,7 +180,8 @@ mod test {
     #[test]
     fn test_signature_to_bytes_serialization()
     {
-        let private_key = PrivateKey::generate();
+        let mut csprng: ThreadRng = thread_rng();
+        let private_key = PrivateKey::generate(&mut csprng);
         let message = "FRENYUM";
         let signature = private_key.sign_message(message.as_bytes());
         let bytes = signature.to_bytes();
@@ -188,7 +192,8 @@ mod test {
     #[test]
     fn test_signature_verify()
     {
-        let private_key = PrivateKey::generate();
+        let mut csprng: ThreadRng = thread_rng();
+        let private_key = PrivateKey::generate(&mut csprng);
         let message = "FRENYUM_OK"; 
         let signature = private_key.sign_message(message.as_bytes());
 
