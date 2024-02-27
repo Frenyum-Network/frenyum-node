@@ -1,7 +1,7 @@
 extern crate ed25519_dalek;
 
 use std::convert::TryFrom;
-use rand::rngs::ThreadRng;
+use rand_core::os::OsRng;
 use ed25519_dalek::*;
 use anyhow::Result;
 use crate::hash::*;
@@ -9,28 +9,33 @@ use serde::Serialize;
 use bincode::serialize_into;
 use ring::agreement::PublicKey as RingPublicKey;
 
+// An Ed25519 private key
 pub struct PrivateKey(ed25519_dalek::SecretKey);
 
 impl PrivateKey {
+    // The lenth of the PrivateKey
     pub const LENGTH: usize = ed25519_dalek::SECRET_KEY_LENGTH;
 
-    pub fn generate(rng: &mut rand::rngs::ThreadRng) -> Self 
+    // The `generate` function generates a random secret key.
+    pub fn generate(rng: &mut rand_core::os::OsRng) -> Self 
     {
         let secret_key = ed25519_dalek::SecretKey::generate(rng);
         PrivateKey(secret_key)
     }
-
+    
+    // The `to_public_key` function generates a `PublicKey` from a `PrivateKey`.
     pub fn to_public_key(&self) -> PublicKey
     {
         PublicKey::from(&self.0)
     }
 
-
+    // The `to_bytes` function converts the secret key to a byte array.
     pub fn to_bytes(&self) -> [u8; Self::LENGTH] 
     {
         self.0.to_bytes()
     }
 
+    // The `sign_message` function signs a given message.
     pub fn sign_message(&self, message: &[u8]) -> Signature 
     {
         let secret_key: &SecretKey = &self.0;
@@ -66,17 +71,22 @@ impl From<&ed25519_dalek::SecretKey> for PublicKey
     }
 }
 
+// An Ed25519 public key
 #[derive(PartialEq, Debug)]
 pub struct PublicKey(ed25519_dalek::PublicKey);
 
 impl PublicKey {
+    
+    // The length of the PublicKey
     pub const LENGTH: usize = ed25519_dalek::PUBLIC_KEY_LENGTH;
 
+    // The `to_bytes` function converts the public key to a byte array.
     pub fn to_bytes(&self) -> [u8; Self::LENGTH] 
     {
         self.0.to_bytes()
     }
     
+    // The `from_bytes` function handles possible errors when creating a `PublicKey` from a byte array.
     pub fn from_bytes(bytes: &[u8; Self::LENGTH]) -> Result<Self, anyhow::Error>
     {
         if bytes.len() != Self::LENGTH
@@ -88,17 +98,21 @@ impl PublicKey {
     }
 }
 
+// An Ed25519 signature
 #[derive(PartialEq, Debug)]
 pub struct Signature(ed25519_dalek::Signature);
 
 impl Signature {
+    // The length of the Signature
     pub const LENGTH: usize = ed25519_dalek::SIGNATURE_LENGTH;
 
+    // The `to_bytes` function converts the signature to a byte array.
     pub fn to_bytes(&self) -> [u8; Self::LENGTH] 
     {
         self.0.to_bytes()
     }
-
+    
+    // The `from_bytes` function handles possible errors when creating a `Signature` from a byte array.
     pub fn from_bytes(bytes: &[u8; Self::LENGTH]) -> Result<Self, anyhow::Error>
     {
         if bytes.len() != Self::LENGTH
@@ -112,7 +126,10 @@ impl Signature {
 
         Ok(Signature(signature))
     }
-
+    
+    // Signature verification is a process used in the ed25519 digital signature scheme. Usually, it is used to verify that a message 
+    // used to verify who sent it. The signature is generated using a private key 
+    // is generated and verified with the corresponding public key.
     pub fn verify<T>(
         &self,
         message: &T,
