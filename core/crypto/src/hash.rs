@@ -20,9 +20,11 @@ use ring::digest::*;
 use anyhow::Error as AnyhowError;
 use std::default::Default;
 
+// Output value of our hash function.
 #[derive(Clone, Copy, PartialEq, Default)]
 pub struct HashDigest(pub [u8; HashDigest::LENGTH]);
 
+// Represents errors that can occur during hash operations.
 #[derive(Debug, PartialEq)]
 pub enum HashError
 {
@@ -33,6 +35,7 @@ pub enum HashError
     UnsupportedAlgorithm,
 }
 
+// Represents supported hashing algorithms.
 pub enum Algorithm
 {
     Keccak,
@@ -44,24 +47,29 @@ pub enum Algorithm
 #[allow(dead_code)]
 impl HashDigest 
 {
+    // The length of the HashDigest
     pub const LENGTH: usize = 32;
     
+    // The 'calculate' function calculates a summary using the specified algorithm on the specified data.
     pub fn calculate(bytes: &[u8], algorithm: Algorithm) -> Result<HashDigest, HashError>
     {   
+         // Check the data length and return an error if necessary.
         if bytes.len() > HashDigest::LENGTH 
         {
            return Err(HashError::DataTooLong);
         }
 
+        // Check if the data is empty and return an error if necessary.
         if bytes.is_empty()
         {
             return Err(HashError::EmptyData);
         }
         
         let mut hash_digest = [0u8; HashDigest::LENGTH];
-
+        
+        // Calculate the hash using the specified algorithm.
         match algorithm 
-        {
+        {   
             Algorithm::SHA256 => {
                 let mut context = Context::new(&SHA256);
                 context.update(bytes);
@@ -85,16 +93,19 @@ impl HashDigest
         }
     }
 
+    // The 'eq' function checks if two `HashDigests` are equal.
     pub fn eq(&self, hash: &HashDigest) -> bool
     {
         &self.0 == &hash.0
     }
 
+    // The 'to_string' function converts `HashDigest` to hexadecimal.
     pub fn to_string(&self) -> String
     {
         format!("{:02X?}", self.0)
     }
 
+    // The 'to_bytes' function converts `HashDigest` to a byte array.
     pub fn to_byte(&self) -> [u8; HashDigest::LENGTH]
     {
         self.0
@@ -158,6 +169,7 @@ impl From<[u8; HashDigest::LENGTH]> for HashDigest
     }
 }
 
+// The 'hex_digest' function calculates a summary of data with the specified algorithm.
 pub fn hex_digest(algorithm: Algorithm, data: &[u8]) -> Result<HashDigest, HashError>
 {
     match algorithm {
@@ -167,6 +179,7 @@ pub fn hex_digest(algorithm: Algorithm, data: &[u8]) -> Result<HashDigest, HashE
     }
 }
 
+// 'CryptoHash` defines the functions required to compute a hash of data.
 pub trait CryptoHash 
 {
     fn hash(&self) -> Result<HashDigest, HashError>;
