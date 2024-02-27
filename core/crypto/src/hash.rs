@@ -1,3 +1,20 @@
+//! # Hash Algorithms Scheme
+//!
+//! This module provides hash computation capabilities using SHA-256, SHA-512 and Keccak algorithms.
+//! The HashDigest type represents a digest based on an array.
+//!
+//! # Examples
+//!
+//! ```rust
+//! use crate::crypto::{Algorithm, HashDigest};
+//! 
+//! let hash_result = HashDigest::calculate(b"FRENYUM_TEST", Algorithm::SHA256);
+//! match hash_result {
+//!     Ok(hash) => println!("SHA-256 hash: {:?}", hash),
+//!     Err(e) => eprintln!("Error: {:?}", e),
+//! }
+//! ```
+
 use sha3::{Digest, Sha3_256};
 use ring::digest::*;
 use anyhow::Error as AnyhowError;
