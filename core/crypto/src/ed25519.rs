@@ -1,3 +1,36 @@
+//! # Ed25519 Digital Signature Scheme
+//!
+//! This module provides a Rust implementation for the ed25519 digital signature scheme.
+//! The types `PrivateKey`, `PublicKey` and `Signature` are the basic building blocks of this scheme.
+//!
+//! ## Key Generation
+//!
+//! To generate a new private key, you can use the `PrivateKey::generate` function. Once you have a
+//! private key, you can derive the corresponding public key using the `to_public_key` method.
+//!
+//! ## Signing Messages
+//!
+//! To sign a message with a private key, you can use the `sign_message` method of the `PrivateKey`
+//! struct. This will produce a signature that can be attached to the message.
+//!
+//! ## Verifying Signatures
+//!
+//! To verify a signature, you need both the message and the corresponding public key. You can use
+//! the `verify` method of the `Signature` struct to check if the signature is valid for the given
+//! message and public key.
+//!
+//! # Examples
+//!
+//! ```
+//! use ed25519_dalek::{PrivateKey, PublicKey, Signature};
+//!
+//! let private_key = PrivateKey::generate(&mut rand_core::os::OsRng);
+//! let public_key = private_key.to_public_key();
+//! let message = b"FRENYUM_TEST";
+//! let signature = private_key.sign_message(message);
+//! assert!(signature.verify(message, &public_key).is_ok());
+//! ```
+
 extern crate ed25519_dalek;
 
 use std::convert::TryFrom;
