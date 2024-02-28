@@ -1,3 +1,41 @@
+//! # BlockHeader
+//!
+//! This module defines the `BlockHeader` struct, which represents the header of a blockchain block.
+//! It contains various metadata about the block, such as the hash, protocol version, parent hash,
+//! block number, block height, difficulty, timestamp, nonce, total difficulty, gas used, gas limit,
+//! and transaction root.
+//!
+//! ## Example
+//!
+//! ```
+//! use crate::{BlockHeader, BlockHeaderBuilder};
+//! use crypto::hash::HashDigest;
+//! use utils::{gas::Gas, timestamp::Timestamp};
+//! use crate::{BlockNumber, BlockHeight, U256};
+//!
+//! // Create a new BlockHeader using the builder pattern
+//! let header = BlockHeaderBuilder::new()
+//!     .set_hash(HashDigest::default())
+//!     .set_protocol_version(1)
+//!     .set_parent_hash(HashDigest::default())
+//!     .set_block_number(123)
+//!     .set_block_height(456)
+//!     .set_difficulty(U256::from(1000))
+//!     .set_timestamp(Timestamp::now())
+//!     .set_nonce(U256::from(12345))
+//!     .set_total_difficulty(U256::from(5000))
+//!     .set_gas_used(Gas::new(100))
+//!     .set_gas_limit(Gas::new(1000))
+//!     .set_transaction_root(HashDigest::default())
+//!     .build();
+//!
+//! // Now you can use the `header` object
+//! assert_eq!(header.protocol_version(), 1);
+//! assert_eq!(header.block_number(), 123);
+//! ```
+//!
+//! Note: This is just an example. Actual values may vary depending on the use case.
+
 use crypto::hash::HashDigest;
 use utils::{gas::Gas, timestamp::Timestamp};
 use crate::{BlockNumber, BlockHeight, U256};
@@ -98,7 +136,7 @@ impl Default for BlockHeader
             parent_hash: Default::default(),
             block_number: 0,
             block_height: 0,
-            difficulty: Default::default(),
+            difficulty: Default::default(),// The `build` function constructs a `BlockHeader` using the provided builder parameters.
             timestamp: Default::default(),
             nonce: Default::default(),
             total_difficulty: Default::default(),
@@ -134,7 +172,7 @@ impl BlockHeaderBuilder
     pub fn set_hash(&mut self, hash: HashDigest) -> &mut Self
     {
         self.hash = hash;
-        self
+        self// The `build` function constructs a `BlockHeader` using the provided builder parameters.
     }
     
     // The `set_protocol_version` function sets the protocol version of the block
