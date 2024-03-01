@@ -1,12 +1,15 @@
 use std::ops::{Add, Sub, Mul, Div};
 
+// An Gas structure
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub struct Gas(u64);
 
 impl Gas
 {
+   // The 'new' function creates a new 'Gas' object with the given amount
    pub fn new(amount: u64) -> Self { Gas(amount) } 
-
+    
+   // The 'amount' function returns the amount of gas
    pub fn amount(&self) -> u64 { self.0 }
 }
 
