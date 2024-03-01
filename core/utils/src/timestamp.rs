@@ -3,13 +3,16 @@ use chrono::{DateTime, Utc};
 use std::fmt;
 use std::str::FromStr;
 
+// An Timestamp structure
 #[derive(Debug, Clone, Copy, Default)]
 pub struct Timestamp(u64);
 
 impl Timestamp
 {
+    // The maximum value a timestamp can have
     pub const MAX: Timestamp = Timestamp(u64::MAX);
-
+    
+    // The 'now' function returns the current system time as a 'Timestamp' object
     pub fn now() -> Self 
     {
         let start = SystemTime::now();
@@ -17,11 +20,13 @@ impl Timestamp
         Timestamp(since_the_epoch.as_secs())
     }
     
+    // The 'reset' function resets the timestamp to zero
     pub fn reset(&mut self)
     {
         self.0 = 0;
     }
 
+    // The 'elapsed' function returns the elapsed time since the timestamp was created
     pub fn elapsed(&self) -> u64 
     {
         let now = Timestamp::now();
