@@ -6,11 +6,28 @@ pub struct RawTransaction
 {
     chain_id: u32,
     nonce: U256,
-    // Action
+    action: Action,
     gas_price: Gas,
     gas: Gas,
     value: U256,
     data: Bytes,
+}
+
+pub enum Action
+{
+    Transfer(TransferAction),
+    // TokenTransfer
+    // CreateAccount
+    // ContractCall
+    // ContractDeploy
+    // DelegateCall
+    // Swap
+}
+
+pub struct TransferAction
+{
+    // to
+    amount: U256,
 }
 
 pub struct SignedTransaction
