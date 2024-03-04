@@ -2,6 +2,11 @@ use utils::{gas::Gas, timestamp::Timestamp};
 use crypto::{hash::HashDigest, ed25519::Signature, ed25519::PublicKey, ed25519::PrivateKey};
 use crate::{U256, Adress, Bytes};
 
+pub enum TransactionError
+{
+    HashError,
+}
+
 pub struct RawTransaction
 {
     chain_id: u32,
@@ -11,7 +16,7 @@ pub struct RawTransaction
     gas: Gas,
     value: U256,
     data: Bytes,
-{
+}
 
 impl RawTransaction
 {
@@ -21,16 +26,12 @@ impl RawTransaction
         public_key: PublicKey 
     ) -> SignedTransaction {
         let signature = private_key.sign(self);
-        let hash_digest = HashDigest::calculate(self.to_byte(), Algorithm::SHA256)
-            .expect("Error calculating hash");
-
-        SignedTransaction::new(self, public_key, signature, hash_digest)
+        let hash_digest = HashDigest::calculate(self.to_byte(), Algorithm::SHA256) {
+            Ok(hash) => hash,
+            Err(_) => return Err(TransactionError::HashError),
+        };
+        Ok(SignedTransaction::new(self, public_key, signature, hash_digest))
     }
-}
-
-fn mesura_size<T>(_: &T) -> usize 
-{
-    std::mem::size_of::<T>()
 }
 
 pub enum Action
@@ -67,8 +68,7 @@ impl SignedTransaction
         signature: Signature
         hash_digest: HashDigest,
     ) -> Self {
-        let size = mesura_size(Self);
-
+        let size = std::mem::size_of::<Self>();
         SignedTransaction {
             timestamp: Timestamp::now(),
             raw_transaction,
