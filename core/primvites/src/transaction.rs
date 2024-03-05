@@ -2,11 +2,6 @@ use utils::{gas::Gas, timestamp::Timestamp};
 use crypto::{hash::HashDigest, ed25519::Signature, ed25519::PublicKey, ed25519::PrivateKey};
 use crate::{U256, Adress, Bytes};
 
-pub enum TransactionError
-{
-    HashError,
-}
-
 pub struct RawTransaction
 {
     chain_id: u32,
@@ -26,11 +21,8 @@ impl RawTransaction
         public_key: PublicKey 
     ) -> SignedTransaction {
         let signature = private_key.sign(self);
-        let hash_digest = HashDigest::calculate(self.to_byte(), Algorithm::SHA256) {
-            Ok(hash) => hash,
-            Err(_) => return Err(TransactionError::HashError),
-        };
-        Ok(SignedTransaction::new(self, public_key, signature, hash_digest))
+        let hash_digest = HashDigest::calculate(self.to_byte(), Algorithm::SHA256).expect("Failed to hash.");
+        SignedTransaction::new(self.clone(), public_key.clone(), signature, hash_digest)
     }
 }
 
@@ -68,13 +60,27 @@ impl SignedTransaction
         signature: Signature
         hash_digest: HashDigest,
     ) -> Self {
-        let size = std::mem::size_of::<Self>();
+        let size = std::mem::size_of::<SignedTransaction>() as 32;
         SignedTransaction {
             timestamp: Timestamp::now(),
             raw_transaction,
             signature,
-            hash: hash_digest
-            size: size as u32
+            hash_digest,
+            size,
         }
     }
 }
+
+/// pub enum ExecutionStatus
+/// {   
+///     Failure
+///     Succes
+///     ...
+/// }
+///
+/// pub struct ExecutionOutcome
+/// {
+///     Status
+///     Gas
+///     ...
+/// }
