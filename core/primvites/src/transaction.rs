@@ -2,7 +2,7 @@ use utils::{gas::Gas, timestamp::Timestamp};
 use crypto::{hash::HashDigest, ed25519::Signature, ed25519::PublicKey, ed25519::PrivateKey};
 use crate::{U256, Adress, Bytes};
 
-pub struct RawTransaction
+pub struct RawTransaction 
 {
     chain_id: u32,
     nonce: U256,
@@ -13,7 +13,7 @@ pub struct RawTransaction
     data: Bytes,
 }
 
-impl RawTransaction
+impl RawTransaction 
 {
     pub fn new(
         chain_id: u32,
@@ -27,22 +27,29 @@ impl RawTransaction
         RawTransaction {
             chain_id,
             nonce,
+            action,
             gas_price,
             gas,
             value,
             data,
-        };
+        }
     }
+
     pub fn sign(
         &self,
-        private_key: PrivateKey, 
-        public_key: PublicKey 
+        private_key: PrivateKey,
+        public_key: PublicKey,
     ) -> SignedTransaction {
         let signature = private_key.sign(self);
-        let hash_digest = HashDigest::calculate(self.to_byte(), Algorithm::SHA256).expect("Failed to hash.");
-        SignedTransaction::new(self.clone(), public_key.clone(), signature, hash_digest)
-        }
-   }
+        let hash_digest = HashDigest::calculate(self.to_bytes(), HashAlgorithm::SHA256).expect("Failed to hash.");
+        SignedTransaction::new(
+            self.clone(),
+            public_key.clone(),
+            signature,
+            hash_digest,
+        )
+    }
+}
 
 pub enum Action
 {
@@ -65,15 +72,15 @@ pub struct SignedTransaction
     size: u32,
 }
 
-impl SignedTransaction
+impl SignedTransaction 
 {
     pub fn new(
         raw_transaction: RawTransaction,
         public_key: PublicKey,
-        signature: Signature
+        signature: Signature,
         hash_digest: HashDigest,
     ) -> Self {
-        let size = std::mem::size_of::<SignedTransaction>() as 32;
+        let size = std::mem::size_of::<SignedTransaction>() as u32;
         SignedTransaction {
             timestamp: Timestamp::now(),
             raw_transaction,
@@ -81,6 +88,17 @@ impl SignedTransaction
             hash_digest,
             size,
         }
+    }
+
+
+    pub fn get_size(&self) -> u32
+    {
+        self.size
+    }
+
+    pub fn get_hash(&self) -> &HashDigest
+    {
+        &self.hash
     }
 }
 
@@ -116,13 +134,13 @@ mod test
         let raw_transaction = RawTransaction {
             chain_id: 1,
             nonce: U256::from(12345),
-            action: Action::Tranasfer(TransferAction { 
+            action: Action::Transfer(TransferAction { 
                 to: Adress::new([0; 20]), 
                 amount: U256::from(100), 
             }),
             gas_price: Gas::from(10),
             gas: Gas::from(1000),
-            value: U256::from(),
+            value: U256::from(500),
             data: Bytes::from(&[1, 2, 3, 4]),
         };
 
