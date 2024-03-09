@@ -34,7 +34,7 @@
 extern crate ed25519_dalek;
 
 use std::convert::TryFrom;
-use rand_core::os::OsRng;
+use rand::rngs::OsRng;
 use ed25519_dalek::*;
 use anyhow::Result;
 use crate::hash::*;
@@ -50,7 +50,7 @@ impl PrivateKey {
     pub const LENGTH: usize = ed25519_dalek::SECRET_KEY_LENGTH;
 
     // The `generate` function generates a random secret key.
-    pub fn generate(rng: &mut rand_core::os::OsRng) -> Self 
+    pub fn generate(rng: &mut OsRng) -> Self 
     {
         let secret_key = ed25519_dalek::SecretKey::generate(rng);
         PrivateKey(secret_key)
