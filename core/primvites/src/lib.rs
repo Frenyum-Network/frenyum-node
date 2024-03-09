@@ -1,6 +1,7 @@
 pub use ethereum_types::{Address, U256};
 
 pub mod block;
+pub mod transaction;
 pub mod block_header;
 
 pub type Bytes = Vec<u8>;
