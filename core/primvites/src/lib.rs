@@ -1,4 +1,4 @@
-pub use ethereum_types::{Adress, U256};
+pub use ethereum_types::{Address, U256};
 
 pub mod block;
 pub mod block_header;
