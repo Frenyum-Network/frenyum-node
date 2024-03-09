@@ -188,13 +188,12 @@ impl Signature {
 
 mod test {
     use super::*;
-    use rand::rngs::ThreadRng;
     use crate::hash::HashDigest;
 
     #[test]
     fn test_private_key_generate_creates_valid_key()
     {
-        let mut csprng: ThreadRng = thread_rng();
+        let mut csprng: OsRng = OsRng;
         let private_key = PrivateKey::generate(&mut csprng);
         assert_eq!(private_key.0.to_bytes().len(), PrivateKey::LENGTH);
     }
@@ -202,7 +201,7 @@ mod test {
     #[test]
     fn test_private_key_to_public_key_conversion()
     {
-        let mut csprng: ThreadRng = thread_rng();
+        let mut csprng: OsRng = OsRng;
         let private_key = PrivateKey::generate(&mut csprng);
         let public_key = private_key.to_public_key();
     }
@@ -210,7 +209,7 @@ mod test {
     #[test]
     fn test_public_key_from_bytes_serialization()
     {
-        let mut csprng: ThreadRng = thread_rng();
+        let mut csprng: OsRng = OsRng;
         let private_key = PrivateKey::generate(&mut csprng);
         let public_key = private_key.to_public_key();
         let bytes = public_key.to_bytes();
@@ -230,7 +229,7 @@ mod test {
     #[test]
     fn test_signature_to_bytes_serialization()
     {
-        let mut csprng: ThreadRng = thread_rng();
+        let mut csprng: OsRng = OsRng;
         let private_key = PrivateKey::generate(&mut csprng);
         let message = "FRENYUM";
         let signature = private_key.sign_message(message.as_bytes());
@@ -239,16 +238,15 @@ mod test {
         assert_eq!(signature, restored_signature);
     }
 
+    // The failed test result will then be analyzed.
     #[test]
     fn test_signature_verify()
     {
-        let mut csprng: ThreadRng = thread_rng();
+        let mut csprng: OsRng = OsRng;
         let private_key = PrivateKey::generate(&mut csprng);
         let message = "FRENYUM_OK"; 
         let signature = private_key.sign_message(message.as_bytes());
-
         let public_key = private_key.to_public_key();
-
         assert!(signature.verify(message.as_bytes(), &public_key).is_ok());
     }
 }
