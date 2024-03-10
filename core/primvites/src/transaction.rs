@@ -62,14 +62,14 @@ impl RawTransaction
     }
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, PartialEq, Debug)]
 pub enum Action
 {
     Transfer(TransferAction),
     // Other actions yet to be designed
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, PartialEq, Debug)]
 pub struct TransferAction
 {
    pub to: Address,
@@ -134,9 +134,11 @@ impl SignedTransaction
 mod test
 {
     use super::*;
-    use rand_core::os::OsRng;
-    use utils::ed25519::*;
-
+    use rand::rngs::OsRng;
+    use anyhow::anyhow;
+    use crypto::ed25519::{PrivateKey, PublicKey, Signature};
+    
+    // Failed Test
     #[test]
     fn test_sign_transaction()
     { 
@@ -148,7 +150,7 @@ mod test
             chain_id: 1,
             nonce: U256::from(12345),
             action: Action::Transfer(TransferAction { 
-                to: Address::new([0; 20]), 
+                to: Address::from([0; 20]), 
                 amount: U256::from(100), 
             }),
             gas_price: Gas::from(10),
@@ -164,7 +166,7 @@ mod test
         assert_eq!(
             signed_transaction.raw_transaction.action,
             Action::Transfer(TransferAction {
-                to: Address::new([0; 20]),
+                to: Address::from([0; 20]),
                 amount: U256::from(100),
             })
         );
