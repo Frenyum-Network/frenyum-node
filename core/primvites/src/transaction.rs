@@ -1,7 +1,11 @@
 use utils::{gas::Gas, timestamp::Timestamp};
-use crypto::{hash::HashDigest, ed25519::Signature, ed25519::PublicKey, ed25519::PrivateKey};
-use crate::{U256, Adress, Bytes};
+use crypto::{hash::HashDigest, hash::Algorithm, ed25519::Signature, ed25519::PublicKey, ed25519::PrivateKey};
+use crate::{U256, Address, Bytes};
+use serde::Serialize;
+use anyhow::anyhow;
+use bincode;
 
+#[derive(Serialize, Clone)]
 pub struct RawTransaction 
 {
     chain_id: u32,
@@ -40,8 +44,10 @@ impl RawTransaction
         private_key: PrivateKey,
         public_key: PublicKey,
     ) -> SignedTransaction {
-        let signature = private_key.sign(self);
-        let hash_digest = HashDigest::calculate(self.to_bytes(), HashAlgorithm::SHA256).expect("Failed to hash.");
+        let raw_tx_bytes = bincode::serialize(self)
+            .map_err(|e| anyhow::anyhow!("SerializationError: {}", e)).unwrap();
+        let signature = private_key.sign_message(&raw_tx_bytes);
+        let hash_digest = HashDigest::calculate(&raw_tx_bytes, Algorithm::SHA256).expect("Failed to hash.");
         SignedTransaction::new(
             self.clone(),
             public_key.clone(),
@@ -49,17 +55,24 @@ impl RawTransaction
             hash_digest,
         )
     }
+
+    pub fn to_bytes(&self) -> Result<Vec<u8>, bincode::Error>
+    {
+        bincode::serialize(self)
+    }
 }
 
+#[derive(Serialize, Clone)]
 pub enum Action
 {
     Transfer(TransferAction),
     // Other actions yet to be designed
 }
 
+#[derive(Serialize, Clone)]
 pub struct TransferAction
 {
-   pub to: Adress,
+   pub to: Address,
    pub amount: U256,
 }
 
@@ -78,14 +91,14 @@ impl SignedTransaction
         raw_transaction: RawTransaction,
         public_key: PublicKey,
         signature: Signature,
-        hash_digest: HashDigest,
+        hash: HashDigest,
     ) -> Self {
         let size = std::mem::size_of::<SignedTransaction>() as u32;
         SignedTransaction {
             timestamp: Timestamp::now(),
             raw_transaction,
             signature,
-            hash_digest,
+            hash,
             size,
         }
     }
@@ -135,7 +148,7 @@ mod test
             chain_id: 1,
             nonce: U256::from(12345),
             action: Action::Transfer(TransferAction { 
-                to: Adress::new([0; 20]), 
+                to: Address::new([0; 20]), 
                 amount: U256::from(100), 
             }),
             gas_price: Gas::from(10),
