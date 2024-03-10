@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 chrono = "0.4.34"
 ethereum-types = "0.14.1"
-serde = "1.0.197"
+serde =  {version = "1.0.197", features = ["derive"]}
