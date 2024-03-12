@@ -1,8 +1,9 @@
-use crate::block_header::BlockHeader;
+use crate::{block_header::BlockHeader, transaction::SignedTransaction, Address};
+use std::sync::Arc;
 
 pub struct FinalizeBlock
 {
     header: BlockHeader,
     transaction: Vec<Arc<SignedTransaction>>,
-    // Validator
+    validator: Address,
 }
