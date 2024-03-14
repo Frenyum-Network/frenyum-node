@@ -4,18 +4,15 @@ use std::sync::Arc;
 pub struct Block
 {
     header: BlockHeader,
-    transaction: Vec<Arc<SignedTransaction>>,
+    body: BlockBody,
 }
 
 impl Block
 {
-    pub fn new(
-        header: BlockHeader,
-        transaction: Vec<Arc<SignedTransaction>>,
-    ) -> Self {
+    pub fn new(header: BlockHeader, body: BlockBody) -> Self {
         Block {
             header,
-            transaction,
+            body,
         }
     }
 
@@ -24,8 +21,16 @@ impl Block
         &self.header
     }
 
-    pub fn transaction(&self) -> &Vec<Arc<SignedTransaction>>
+    pub fn body(&self) -> &BlockBody
     {
-        &self.transaction
+        &self.body
     }
 }
+
+pub struct BlockBody
+{
+    transaction: Vec<Arc<SignedTransaction>>,
+    gas_used: Gas,
+    gas_limit: Gas,
+}
+
