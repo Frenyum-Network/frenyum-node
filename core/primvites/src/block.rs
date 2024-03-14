@@ -9,5 +9,23 @@ pub struct Block
 
 impl Block
 {
+    pub fn new(
+        header: BlockHeader,
+        transaction: Vec<Arc<SignedTransaction>>,
+    ) -> Self {
+        Block {
+            header,
+            transaction,
+        }
+    }
 
+    pub fn header(&self) -> &BlockHeader
+    {
+        &self.header
+    }
+
+    pub fn transaction(&self) -> &Vec<Arc<SignedTransaction>>
+    {
+        &self.transaction
+    }
 }
