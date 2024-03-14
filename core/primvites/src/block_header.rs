@@ -10,7 +10,7 @@
 //! ```
 //! use crate::{BlockHeader, BlockHeaderBuilder};
 //! use crypto::hash::HashDigest;
-//! use utils::{gas::Gas, timestamp::Timestamp};
+//! use utils::timestamp::Timestamp;
 //! use crate::{BlockNumber, BlockHeight, U256};
 //!
 //! // Create a new BlockHeader using the builder pattern
@@ -24,8 +24,6 @@
 //!     .set_timestamp(Timestamp::now())
 //!     .set_nonce(U256::from(12345))
 //!     .set_total_difficulty(U256::from(5000))
-//!     .set_gas_used(Gas::new(100))
-//!     .set_gas_limit(Gas::new(1000))
 //!     .set_transaction_root(HashDigest::default())
 //!     .build();
 //!
@@ -37,7 +35,7 @@
 //! Note: This is just an example. Actual values may vary depending on the use case.
 
 use crypto::hash::HashDigest;
-use utils::{gas::Gas, timestamp::Timestamp};
+use utils::timestamp::Timestamp;
 use crate::{BlockNumber, BlockHeight, U256};
 
 // An Block header
@@ -61,10 +59,6 @@ pub struct BlockHeader
     nonce: U256,
     // Total block difficulty
     total_difficulty: U256,
-    // Used gas price
-    gas_used: Gas,
-    // Gas limit
-    gas_limit: Gas,
     // Transaction root
     transaction_root: HashDigest,
 }
@@ -98,12 +92,6 @@ impl BlockHeader
     // The `total_difficulty` function returns the total difficulty of the block
     pub fn total_difficulty(&self) -> &U256 { &self.total_difficulty }
 
-    // The `gas_used` function returns the gas used in the block
-    pub fn gas_used(&self) -> &Gas { &self.gas_used }
-
-    // The `gas_limit` function returns the gas limit of the block
-    pub fn gas_limit(&self) -> &Gas { &self.gas_limit }
-
     // The `transaction_root` function returns the transaction root of the block
     pub fn transaction_root(&self) -> &HashDigest { &self.transaction_root }
 }
@@ -121,8 +109,6 @@ pub struct BlockHeaderBuilder
     timestamp: Timestamp,
     nonce: U256,
     total_difficulty: U256,
-    gas_used: Gas,
-    gas_limit: Gas,
     transaction_root: HashDigest,
 }
 
@@ -140,8 +126,6 @@ impl Default for BlockHeader
             timestamp: Default::default(),
             nonce: Default::default(),
             total_difficulty: Default::default(),
-            gas_used: Default::default(),
-            gas_limit: Default::default(),
             transaction_root: Default::default(),
         }
     }
@@ -162,8 +146,6 @@ impl BlockHeaderBuilder
             timestamp: Default::default(),
             nonce: Default::default(),
             total_difficulty: Default::default(),
-            gas_used: Default::default(),
-            gas_limit: Default::default(),
             transaction_root: Default::default(),
         }  
     }
@@ -231,20 +213,6 @@ impl BlockHeaderBuilder
         self
     }
 
-    // The `set_gas_used` function sets the gas used in the block
-    pub fn set_gas_used(&mut self, gas_used: Gas) -> &mut Self
-    {
-        self.gas_used = gas_used;
-        self
-    }
-
-    // The `set_gas_limit` function sets the gas limit of the block
-    pub fn set_gas_limit(&mut self, gas_limit: Gas) -> &mut Self
-    {
-        self.gas_limit = gas_limit;
-        self
-    }
-
     // The `set_transaction_root` function sets the transaction root of the block
     pub fn set_transaction_root(&mut self, transaction_root: HashDigest) -> &mut Self  
     {
@@ -264,8 +232,6 @@ impl BlockHeaderBuilder
         let timestamp = self.timestamp;
         let nonce = self.nonce;
         let total_difficulty = self.total_difficulty;
-        let gas_used = self.gas_used;
-        let gas_limit = self.gas_limit;
         let transaction_root = self.transaction_root;
 
         
@@ -279,8 +245,6 @@ impl BlockHeaderBuilder
             timestamp,
             nonce,
             total_difficulty,
-            gas_used,
-            gas_limit,
             transaction_root,
         }
     } 
@@ -303,8 +267,6 @@ mod test
         let timestamp = Timestamp::now();
         let nonce = U256::from(12345);
         let total_difficulty = U256::from(5000);
-        let gas_used = Gas::new(100);
-        let gas_limit = Gas::new(1000);
         let transaction_root = HashDigest::default();
 
         let header = BlockHeaderBuilder::new()
@@ -317,8 +279,6 @@ mod test
             .set_timestamp(timestamp.clone())
             .set_nonce(nonce.clone())
             .set_total_difficulty(total_difficulty.clone())
-            .set_gas_used(gas_used.clone())
-            .set_gas_limit(gas_limit.clone())
             .set_transaction_root(transaction_root.clone())
             .build();
 
@@ -331,8 +291,6 @@ mod test
         assert_eq!(header.timestamp(), &timestamp);
         assert_eq!(header.nonce(), &nonce);
         assert_eq!(header.total_difficulty(), &total_difficulty);
-        assert_eq!(header.gas_used(), &gas_used);
-        assert_eq!(header.gas_limit(), &gas_limit);
         assert_eq!(header.transaction_root(), &transaction_root);
     }
     
