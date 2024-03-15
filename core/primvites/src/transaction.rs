@@ -5,20 +5,29 @@ use serde::Serialize;
 use anyhow::anyhow;
 use bincode;
 
+// Struct representing a raw transaction
 #[derive(Serialize, Clone)]
 pub struct RawTransaction 
 {
+    // Chain identifier
     chain_id: u32,
+    // Nonce for transaction ordering
     nonce: U256,
+    // Action to be performed in the transaction
     action: Action,
+    // Gas price in the transaction
     gas_price: Gas,
+    // Gas limit for the transaction
     gas: Gas,
+    // Value (amount) to be transferred in the transaction
     value: U256,
+    // Additional data payload for the transaction
     data: Bytes,
 }
 
 impl RawTransaction 
 {
+    // The 'new' function creates a new raw transaction constructor
     pub fn new(
         chain_id: u32,
         nonce: U256,
@@ -39,15 +48,20 @@ impl RawTransaction
         }
     }
 
+    // The 'sign' function sign the raw transaction
     pub fn sign(
         &self,
         private_key: PrivateKey,
         public_key: PublicKey,
     ) -> SignedTransaction {
+        // Serialize raw transaction to bytes
         let raw_tx_bytes = bincode::serialize(self)
             .map_err(|e| anyhow::anyhow!("SerializationError: {}", e)).unwrap();
+        // Sign the serialized transaction bytes
         let signature = private_key.sign_message(&raw_tx_bytes);
+        // Calculate hash digest of the serialized transaction bytes
         let hash_digest = HashDigest::calculate(&raw_tx_bytes, Algorithm::SHA256).expect("Failed to hash.");
+        // Create a signed transaction
         SignedTransaction::new(
             self.clone(),
             public_key.clone(),
@@ -56,12 +70,14 @@ impl RawTransaction
         )
     }
 
+    // The 'to_bytes' function// The 'new' function creates a new raw transaction constructor 
     pub fn to_bytes(&self) -> Result<Vec<u8>, bincode::Error>
     {
         bincode::serialize(self)
     }
 }
 
+// Enum representing different types of actions in a transaction
 #[derive(Serialize, Clone, PartialEq, Debug)]
 pub enum Action
 {
@@ -69,6 +85,7 @@ pub enum Action
     // Other actions yet to be designed
 }
 
+// Struct representing a transfer action
 #[derive(Serialize, Clone, PartialEq, Debug)]
 pub struct TransferAction
 {
@@ -76,17 +93,24 @@ pub struct TransferAction
    pub amount: U256,
 }
 
+// Struct representing a signed transaction
 pub struct SignedTransaction
 {
+    // Timestamp of the transaction
     timestamp: Timestamp,
+    // Raw transaction being signed
     raw_transaction: RawTransaction,
+    // Signature of the transaction
     signature: Signature,
+    // Hash digest of the transaction
     hash: HashDigest,
+    // Size of the transaction
     size: u32,
 }
 
 impl SignedTransaction 
 {
+    // The 'new' function creates a new signed transaction constructor
     pub fn new(
         raw_transaction: RawTransaction,
         public_key: PublicKey,
@@ -103,12 +127,13 @@ impl SignedTransaction
         }
     }
 
-
+    // The 'get_size' function get the size of the transaction
     pub fn get_size(&self) -> u32
     {
         self.size
     }
-
+    
+    // The 'get_hash' function get the hash digest of the transaction
     pub fn get_hash(&self) -> &HashDigest
     {
         &self.hash
