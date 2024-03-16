@@ -6,7 +6,7 @@ use anyhow::anyhow;
 use bincode;
 
 // Struct representing a raw transaction
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct RawTransaction 
 {
     // Chain identifier
@@ -94,6 +94,7 @@ pub struct TransferAction
 }
 
 // Struct representing a signed transaction
+#[derive(Debug)]
 pub struct SignedTransaction
 {
     // Timestamp of the transaction
