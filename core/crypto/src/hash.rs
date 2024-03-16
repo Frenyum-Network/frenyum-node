@@ -138,6 +138,14 @@ impl std::fmt::Debug for HashDigest
     }
 }
 
+impl std::fmt::Display for HashDigest
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
+    {
+        write!(f, "{:?}", self)
+    }
+}
+
 impl std::fmt::Display for HashError
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result 
