@@ -1,7 +1,8 @@
-use std::ops::{Add, Sub, Mul, Div};
+use serde::Serialize;
+use std::{fmt::Formatter, fmt};
 
 // An Gas structure
-#[derive(Debug, Clone, Copy, Default, PartialEq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Serialize)]
 pub struct Gas(u64);
 
 impl Gas
@@ -21,6 +22,13 @@ impl AsRef<u64> for Gas
     }
 }
 
+impl fmt::Display for Gas
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result
+    {
+        write!(f, "{}", self.0)
+    }
+}
 
 impl std::ops::Sub<Gas> for Gas
 {
