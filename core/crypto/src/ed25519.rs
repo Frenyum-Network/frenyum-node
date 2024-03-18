@@ -105,7 +105,7 @@ impl From<&ed25519_dalek::SecretKey> for PublicKey
 }
 
 // An Ed25519 public key
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct PublicKey(ed25519_dalek::PublicKey);
 
 impl PublicKey {
