@@ -1,4 +1,4 @@
-use rocksdb::{DB, Options, WriteBatch, Direction, IteratorMode, ColumnFamily};
+use rocksdb::{DB, Options, WriteBatch, Direction, IteratorMode, ColumnFamily, ErrorKind};
 use std::collections::HashMap;
 use crate::column::Column;
 
@@ -20,8 +20,11 @@ impl RocksDB
         RocksDB { db, db_opt, db_cf }
     }
 
-    pub fn open(path: &str, db_cf: HashMap<Column, ColumnFamily>) -> Result<Self, rocksdb::Error>
-    {
+    pub fn open(
+        path: &str, 
+        db_cf: HashMap<Column, 
+        ColumnFamily>
+    ) -> Result<Self, rocksdb::Error> {
         let db_opt = Options::default();
         let db = DB::open_default(path)?;
         Ok(RocksDB::new(db, db_opt, db_cf))
@@ -50,8 +53,31 @@ impl RocksDB
 // Key operations
 impl RocksDB
 {
-    pub fn get(&self, column: Column) -> &ColumnFamily
-    {
-        self.db_cf.get(&column).expect("ColumnFamily not found")
+    pub fn get(
+        &self, 
+        column: Column, 
+        key: &[u8]
+    ) -> Result<Option<Vec<u8>>, rocksdb::Error> {
+        let cf = self.db_cf.get(&column).expect("Column family not found!");
+        self.db.get_cf(cf, key)
     }
+
+    pub fn put(
+        &self,
+        column: Column,
+        key: &[u8],
+        value: &[u8]
+     ) -> Result<(), rocksdb::Error> {
+        let cf = self.db_cf.get(&column).expect("Column family not found!");
+        self.db.put_cf(cf, key, value)
+    }
+
+    pub fn delete(
+        &mut self,
+        column: Column,
+        key: &[u8]
+     ) -> Result<(), rocksdb::Error> {
+        let cf = self.db_cf.get(&column).expect("Column family not found!");
+        self.db.delete_cf(cf, key)
+    } 
 }
