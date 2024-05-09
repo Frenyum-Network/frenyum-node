@@ -1,13 +1,11 @@
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Eq, Hash, PartialEq)]
 pub enum Column
 {
-    Block,
     BlockHeader,
     BlockBody,
-    RawTransaction,
-    SignedTransaction,
+    Transaction,
 }
 
 impl Column
@@ -16,12 +14,20 @@ impl Column
     {
         match (self, column_type)
         {
-            (Column::Block, "Block") => true,
             (Column::BlockHeader, "BlockHeader") => true,
             (Column::BlockBody, "BlockBody") => true,
-            (Column::RawTransaction, "RawTransaction") => true,
-            (Column::SignedTransaction, "SignedTransaction") => true,
+            (Column::Transaction, "Transaction") => true,
             _ => false,
+        }
+    }
+    
+    pub fn to_string(&self) -> String 
+    {
+        match self 
+        {
+            Column::BlockHeader => "BlockHeader".to_string(),
+            Column::BlockBody => "BlockBody".to_string(),
+            Column::Transaction => "Transaction".to_string(),
         }
     }
 }
