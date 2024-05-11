@@ -2,7 +2,9 @@
 members = [
     "core/primvites",
     "core/crypto",
-    "core/utils", "core/storage",
+    "core/utils", 
+    "core/storage",
+    "core/utils/congifs",
 ]
 
 [package]
