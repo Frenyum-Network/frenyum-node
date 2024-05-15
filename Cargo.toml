@@ -4,7 +4,6 @@ members = [
     "core/crypto",
     "core/utils", 
     "core/storage",
-    "core/utils/congifs",
 ]
 
 [package]
