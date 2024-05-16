@@ -1,6 +1,9 @@
 use std::path::PathBuf;
+use serde::{Deserialize, Serialize};
 
 // Database config
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(default)]
 pub struct StoreConfig
 {
     // Represents the directory where the database files will be stored.
