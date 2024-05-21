@@ -54,6 +54,11 @@ impl RocksDB
         }).collect();   
         let db = DB::open_cf_descriptors(&db_opt, path, cf_descriptors)?;
         Ok((db, db_opt))
-    } 
+    }
+
+    pub fn write(&self, batch: WriteBatch) -> Result<(), rocksdb::Error>
+    {
+        self.db.write(batch)
+    }
 }
 
