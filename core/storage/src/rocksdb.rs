@@ -1,5 +1,9 @@
 use utils::db::StoreConfig;
-use rocksdb::{DB, Options, WriteBatch, Direction, IteratorMode, ColumnFamily, ErrorKind, ColumnFamilyDescriptor};
+use rocksdb::{
+    DB, Options, WriteBatch, Direction, IteratorMode, 
+    ColumnFamily, ErrorKind, ColumnFamilyDescriptor,
+    SingleThreaded, Snapshot, DBWithThreadMode,
+};
 use std::path::Path;
 use std::collections::HashMap;
 use crate::column::Column;
@@ -16,7 +20,7 @@ impl RocksDB
 {
     pub fn open(
         path: &Path, 
-        db_cf: H
+        db_cf: HashMap<Column, ColumnFamily>
     ) -> Result<Self, rocksdb::Error> {
         let db_opt = Options::default();
         let db = DB::open_default(path)?;
@@ -34,7 +38,7 @@ impl RocksDB
 
     fn open_with_columns(
         path: &Path,
-        config: &StoreConfig
+        config: &StoreConfig,
         db_cf: HashMap<Column, ColumnFamily>,
         columns: &[Column],
     ) -> Result<Self, rocksdb::Error> {
@@ -56,9 +60,16 @@ impl RocksDB
         Ok((db, db_opt))
     }
 
+    pub fn create_cf(&mut self, column: &Column) -> Result<(), rocksdb::Error>
+    {
+        let cf_desc = ColumnFamilyDescriptor::new(column.to_string(), Options::default());
+        self.db.create_cf(&cf_desc)?;
+        Ok(())
+    }
+
     pub fn write(&self, batch: WriteBatch) -> Result<(), rocksdb::Error>
     {
         self.db.write(batch)
-    }
+    }    
 }
 
