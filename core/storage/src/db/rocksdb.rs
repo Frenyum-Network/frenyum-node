@@ -1,10 +1,11 @@
 use utils::db::StoreConfig;
 use rocksdb::{
     DB, Options, WriteBatch, ColumnFamily, ErrorKind, ColumnFamilyDescriptor,
+    IteratorMode,
 };
 use std::path::Path;
 use std::collections::HashMap;
-use crate::column::Column;
+use crate::{column::Column, iter::RocksDBIterator};
 
 pub struct RocksDB
 {
@@ -68,6 +69,12 @@ impl RocksDB
     pub fn write(&self, batch: WriteBatch) -> Result<(), rocksdb::Error>
     {
         self.db.write(batch)
-    }    
+    }
+
+    pub fn iter<'a>(&'a self, mode: IteratorMode) -> RocksDBIterator<'a>
+    {
+         RocksDBIterator::new(self.db.iter_with_mode(mode))
+    }
+
 }
 
