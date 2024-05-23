@@ -1,8 +1,6 @@
 use utils::db::StoreConfig;
 use rocksdb::{
-    DB, Options, WriteBatch, Direction, IteratorMode, 
-    ColumnFamily, ErrorKind, ColumnFamilyDescriptor,
-    SingleThreaded, Snapshot, DBWithThreadMode,
+    DB, Options, WriteBatch, ColumnFamily, ErrorKind, ColumnFamilyDescriptor,
 };
 use std::path::Path;
 use std::collections::HashMap;
