@@ -1,4 +1,4 @@
-use utils::db::StoreConfig;
+use utils::configs::db::StoreConfig;
 use rocksdb::{
     DB, Options, WriteBatch, ColumnFamily, ErrorKind, ColumnFamilyDescriptor,
     IteratorMode,
