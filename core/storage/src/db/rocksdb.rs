@@ -1,6 +1,6 @@
 use utils::configs::db::StoreConfig;
 use rocksdb::{
-    DB, Options, WriteBatch, ColumnFamily, ErrorKind, ColumnFamilyDescriptor,
+    DB, Options, WriteBatch, ColumnFamily, ColumnFamilyDescriptor,
     IteratorMode,
 };
 use std::path::Path;
