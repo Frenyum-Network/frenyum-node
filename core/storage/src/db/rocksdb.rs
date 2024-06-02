@@ -5,7 +5,7 @@ use rocksdb::{
 };
 use std::path::Path;
 use std::collections::HashMap;
-use crate::{column::Column, iter::RocksDBIterator};
+use crate::{column::Column, db::iter::RocksDBIterator};
 
 pub struct RocksDB
 {
@@ -47,12 +47,12 @@ impl RocksDB
 
     fn open_db(
         path: &Path, 
-        db_opt: Options,
+        config: &StoreConfig,
         columns: &[Column],
      ) -> Result<(DB, Options), rocksdb::Error> {
         let cf_descriptors: Vec<_> = columns.iter().map(|column| {
             let column = column.to_string(); 
-            let options = Options::default();
+            let options = config.to_options();
             ColumnFamilyDescriptor::new(column, options)
         }).collect();   
         let db = DB::open_cf_descriptors(&db_opt, path, cf_descriptors)?;
