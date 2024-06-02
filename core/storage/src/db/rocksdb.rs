@@ -50,19 +50,24 @@ impl RocksDB
         config: &StoreConfig,
         columns: &[Column],
      ) -> Result<(DB, Options), rocksdb::Error> {
+        let db_opt = config.to_options();
         let cf_descriptors: Vec<_> = columns.iter().map(|column| {
             let column = column.to_string(); 
-            let options = config.to_options();
+            let options = Options::default();
             ColumnFamilyDescriptor::new(column, options)
         }).collect();   
         let db = DB::open_cf_descriptors(&db_opt, path, cf_descriptors)?;
         Ok((db, db_opt))
     }
 
-    pub fn create_cf(&mut self, column: &Column) -> Result<(), rocksdb::Error>
-    {
-        let cf_desc = ColumnFamilyDescriptor::new(column.to_string(), Options::default());
-        self.db.create_cf(&cf_desc)?;
+    pub fn create_cf(
+        &mut self, 
+        column: &Column, 
+        config: &StoreConfig
+        ) -> Result<(), rocksdb::Error> {
+        let cf_name = column.to_string();
+        let cf_options = config.to_options();
+        self.db.create_cf(&cf_name, &cf_options)?;
         Ok(())
     }
 
@@ -73,7 +78,7 @@ impl RocksDB
 
     pub fn iter<'a>(&'a self, mode: IteratorMode) -> RocksDBIterator<'a>
     {
-         RocksDBIterator::new(self.db.iter_with_mode(mode))
+         RocksDBIterator::new(self.db.iterator(mode))
     }
 
 }
