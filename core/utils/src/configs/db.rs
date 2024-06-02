@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
-use rocksdb::Options;
+use rocksdb::{Options, BlockBasedOptions, Cache};
 
 // Database config
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -43,10 +43,12 @@ impl StoreConfig
     pub fn to_options(&self) -> Options
     {
         let mut options = Options::default();
+        let mut block_options = BlockBasedOptions::default();
+        let cache = Cache::new_lru_cache((self.cache_size as usize / (1024 * 1024)) * 1024 * 102);
         options.set_max_open_files(self.max_open_files as i32);
-        let cache_mb = self.cache_size / (1024 * 1024);
-        options.set_block_cache(cache_mb as usize);
-        options.set_block_size(self.block_size as usize);
+        block_options.set_block_cache(&cache);
+        block_options.set_block_size(self.block_size as usize);
+        options.set_block_based_table_factory(&block_options);
         options
     }
 }
