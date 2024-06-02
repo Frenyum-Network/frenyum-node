@@ -40,10 +40,12 @@ impl Default for StoreConfig
 
 impl StoreConfig
 {
+    // Converts the `StoreConfig` into RocksDB `Options`.
     pub fn to_options(&self) -> Options
     {
         let mut options = Options::default();
         let mut block_options = BlockBasedOptions::default();
+        // self.cache_size is in MB, so we convert it to bytes.
         let cache = Cache::new_lru_cache((self.cache_size as usize / (1024 * 1024)) * 1024 * 102);
         options.set_max_open_files(self.max_open_files as i32);
         block_options.set_block_cache(&cache);
