@@ -1,4 +1,3 @@
-use crate::rocksdb::RocksDB;
 pub use rocksdb::{DBIterator, IteratorMode};
 
 // Structure for RocksDB Iteration
