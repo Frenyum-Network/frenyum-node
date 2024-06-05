@@ -6,3 +6,11 @@ pub struct Snapshot<'a>
     snapshot: RocksSnapshot<'a>,
 }
 
+impl<'a> Snapshot<'a>
+{
+    pub fn new(db: &'a DB) -> Self
+    {
+        let snapshot = db.snapshot();
+        Snapshot { db, snapshot }
+    }
+}
