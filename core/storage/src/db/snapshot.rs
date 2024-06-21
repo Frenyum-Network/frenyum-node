@@ -1,16 +1,7 @@
-use rocksdb::{DB, Options, Snapshot as RocksSnapshot};
+use rocksdb::{ffi, DB};
 
-pub struct Snapshot<'a> 
+pub struct Snapshot<'a>
 {
-    db: &'a DB,
-    snapshot: RocksSnapshot<'a>,
-}
-
-impl<'a> Snapshot<'a>
-{
-    pub fn new(db: &'a DB) -> Self
-    {
-        let snapshot = db.snapshot();
-        Snapshot { db, snapshot }
-    }
+    db: 'a DB,
+    snapshot: *const ffi:rocksdb_snapshot_t
 }
