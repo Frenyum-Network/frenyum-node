@@ -14,3 +14,11 @@ impl<'a> Snapshot<'a>
         Snapshot { db, snapshot }
     }
 }
+
+impl<'a> Drop for Snapshot<'a>
+{
+    fn drop(&mut self)
+    {
+        ffi::rocksdb_release_snapshot(self.db, self.snapshot);
+    }
+}
