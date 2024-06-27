@@ -31,6 +31,20 @@ impl<'a> Snapshot<'a>
         unsafe { ffi::rocksdb_readoptions_set_snapshot(readopts.inner(), self.snapshot) };
         self.db.get_cf_opt(cf, key, &readopts)
     }
+
+    pub fn iterator(&self, mode: IteratorMode) -> DBIterator<'a>
+    {
+        let mut readopts = ReadOptions::default();
+        unsafe { ffi::rocksdb_readoptions_set_snapshot(readopts.inner(), self.snapshot) };
+        self.db.iterator_opt(mode, readopts)
+    }
+
+    pub fn raw_iterator(&self) -> DBRawIterator
+    {
+        let mut readopts = ReadOptions::default();
+        unsafe { ffi::rocksdb_readoptions_set_snapshot(readopts.inner(), self.snapshot) };
+        DBRawIterator::new(self.db, readopts)
+    }
 }
 
 impl<'a> Drop for Snapshot<'a>
