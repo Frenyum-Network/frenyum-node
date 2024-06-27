@@ -1,23 +1,23 @@
-use rocksdb::{ffi, DB};
+use rocksdb::{ffi, DB, ColumnFamily, ReadOptions, Error};
 
 pub struct Snapshot<'a>
 {
-    db: 'a DB,
-    pub(crate) snapshot: *const ffi:rocksdb_snapshot_t
+    db: &'a DB,
+    pub(crate) snapshot: *const ffi::rocksdb_snapshot_t,
 }
 
 impl<'a> Snapshot<'a>
 {
-    pub fn new(db: &DB) -> Snapshot
+    pub fn new(db: &'a DB) -> Snapshot<'a>
     {
-        let snapshot = unsafe { ffi::rocksdb_crate_snapshot(db.inner) };
+        let snapshot = unsafe { ffi::rocksdb_create_snapshot(db.inner()) };
         Snapshot { db, snapshot }
     }
 
-    pub fn get<K: AsRef<[u8]>>(&self, key: K) -> Result<Option<<Vec<u8>>, Error>
+    pub fn get<K: AsRef<[u8]>>(&self, key: K) -> Result<Option<Vec<u8>>, Error>
     {
         let mut readopts = ReadOptions::default();
-        unsafe { ffi::rocksdb_readopitons_set_snapshot(readopts.inner(), self.snapshot) };
+        unsafe { ffi::rocksdb_readoptions_set_snapshot(readopts.inner(), self.snapshot) };
         self.db.get_opt(key, &readopts)
     }
 
@@ -25,16 +25,21 @@ impl<'a> Snapshot<'a>
         &self,
         cf: &ColumnFamily,
         key: K,
-    ) -> Result<Option<Vec<u8>>, Error> {
+    ) -> Result<Option<Vec<u8>>, Error>
+    {
         let mut readopts = ReadOptions::default();
         unsafe { ffi::rocksdb_readoptions_set_snapshot(readopts.inner(), self.snapshot) };
-        self.db.get_opt(key, &readopts)
+        self.db.get_cf_opt(cf, key, &readopts)
     }
+}
 
 impl<'a> Drop for Snapshot<'a>
 {
     fn drop(&mut self)
     {
-        ffi::rocksdb_release_snapshot(self.db, self.snapshot);
+        unsafe {
+            ffi::rocksdb_release_snapshot(self.db.inner(), self.snapshot);
+        }
     }
 }
+
