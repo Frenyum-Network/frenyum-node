@@ -1,4 +1,4 @@
-pub struct RocksDBTransaction { pub(crate) inner: OptimisticTransactionDB}
+pub struct RocksDBTransaction { pub(crate) inner: TransactionDB }
 
 impl RocksDBTransaction
 {
@@ -10,4 +10,6 @@ impl RocksDBTransaction
         let cf_handle = self.inner.get_cf_handle(column)?;
         self.inner.get_pinned_cf(cf_handle, key, &ReadOptions::default())
     }
+
+    
 }
