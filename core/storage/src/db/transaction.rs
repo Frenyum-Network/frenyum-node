@@ -4,7 +4,7 @@ pub struct RocksDBTransaction { pub(crate) inner: TransactionDB }
 
 impl RocksDBTransaction
 {
-    pub fn get_pinned<K: AsRef<[u8]>(
+    pub fn get_pinned<K: AsRef<[u8]>>(
         &self,
         col: &str,
         key: K,
@@ -13,7 +13,7 @@ impl RocksDBTransaction
         self.inner.get_pinned_cf(cf_handle, key, &ReadOptions::default())
     }
     
-    pub fn put()<K: AsRef<[u8]>, V: AsRef<[u8]>>(
+    pub fn put<K: AsRef<[u8]>, V: AsRef<[u8]>>(
         &self,
         col: &str,
         key: K,
@@ -23,7 +23,7 @@ impl RocksDBTransaction
         self.inner.put_cf(cf_handle, key, value)
     }
 
-    pub fn delete()<K: AsRef<[u8]>>(
+    pub fn delete<K: AsRef<[u8]>>(
         &self,
         col: &str,
         key: K,
