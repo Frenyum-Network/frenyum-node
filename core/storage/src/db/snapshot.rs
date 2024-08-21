@@ -57,5 +57,5 @@ impl<'a> Drop for Snapshot<'a>
     }
 }
 
-unsafe impl Sync for Snapshot {}
-unsafe impl Send for Snapshot {}
+unsafe impl Sync for Snapshot<'a> {}
+unsafe impl Send for Snapshot<'a> {}
