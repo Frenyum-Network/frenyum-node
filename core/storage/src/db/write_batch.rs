@@ -1,4 +1,4 @@
-use rocksdb::{TransactionDB, WriteBatch}
+use rocksdb::{TransactionDB, WriteBatch};
 use std::sync::Arc;
 
 pub struct RocksDBWriteBatch
@@ -22,6 +22,30 @@ impl RocksDBWriteBatch
     pub fn is_empty(&self) -> bool
     {
         self.inner.is_empty()
+    }
+
+    pub fn put<K, V>(
+        &mut self,
+        key: K,
+        value: V,
+    ) -> Result<(), rocksdb::Error>
+    where
+        K: AsRef<[u8]>,
+        V: AsRef<[u8]>,
+    {
+        self.inner.put(key, value)?;
+        Ok(())
+    }
+
+    pub fn delete<K>(
+        &mut self,
+        key: K,
+    ) -> Result<(), rocksdb::Error>
+    where
+        K: AsRef<[u8]>,
+    {
+        self.inner.put(key)?;
+        Ok(())
     }
 }
 
