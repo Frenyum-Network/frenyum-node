@@ -47,5 +47,10 @@ impl RocksDBWriteBatch
         self.inner.put(key)?;
         Ok(())
     }
+
+    pub fn clear(&mut self) -> Result<()>
+    {
+        self.inner.clear().map_err(internal_error)
+    }
 }
 
