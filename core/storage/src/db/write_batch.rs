@@ -48,9 +48,9 @@ impl RocksDBWriteBatch
         Ok(())
     }
 
-    pub fn clear(&mut self) -> Result<()>
+    pub fn clear(&mut self) -> Result<(), rocksdb::Error>
     {
-        self.inner.clear().map_err(internal_error)
+        self.inner.clear();
     }
 }
 

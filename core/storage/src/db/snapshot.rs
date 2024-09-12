@@ -1,4 +1,4 @@
-use rocksdb::{ffi, DB, ColumnFamily, ReadOptions, Error};
+use rocksdb::{ffi, DB, ColumnFamily, ReadOptions, Error, IteratorMode, DBIterator, DBRawIterator};
 
 pub struct Snapshot<'a>
 {
@@ -57,5 +57,5 @@ impl<'a> Drop for Snapshot<'a>
     }
 }
 
-unsafe impl Sync for Snapshot<'a> {}
-unsafe impl Send for Snapshot<'a> {}
+unsafe impl<'a> Sync for Snapshot<'a> {}
+unsafe impl<'a> Send for Snapshot<'a> {}
