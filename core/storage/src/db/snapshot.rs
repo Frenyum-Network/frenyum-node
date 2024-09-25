@@ -1,4 +1,4 @@
-use rocksdb::{ffi, DB, ColumnFamily, ReadOptions, Error, IteratorMode, DBIterator, DBRawIterator};
+use rocksdb::{DB, ColumnFamily, ReadOptions, Error, IteratorMode, DBIterator, DBRawIterator};
 
 pub struct Snapshot<'a>
 {
@@ -10,14 +10,14 @@ impl<'a> Snapshot<'a>
 {
     pub fn new(db: &'a DB) -> Snapshot<'a>
     {
-        let snapshot = unsafe { ffi::rocksdb_create_snapshot(db.inner()) };
+        let snapshot = db.snapshot();
         Snapshot { db, snapshot }
     }
 
     pub fn get<K: AsRef<[u8]>>(&self, key: K) -> Result<Option<Vec<u8>>, Error>
     {
         let mut readopts = ReadOptions::default();
-        unsafe { ffi::rocksdb_readoptions_set_snapshot(readopts.inner(), self.snapshot) };
+        readopts.set_snapshot(&self.snapshot);
         self.db.get_opt(key, &readopts)
     }
 
@@ -28,21 +28,21 @@ impl<'a> Snapshot<'a>
     ) -> Result<Option<Vec<u8>>, Error>
     {
         let mut readopts = ReadOptions::default();
-        unsafe { ffi::rocksdb_readoptions_set_snapshot(readopts.inner(), self.snapshot) };
+        readopts.set_snapshot(&self.snapshot);
         self.db.get_cf_opt(cf, key, &readopts)
     }
 
     pub fn iterator(&self, mode: IteratorMode) -> DBIterator<'a>
     {
         let mut readopts = ReadOptions::default();
-        unsafe { ffi::rocksdb_readoptions_set_snapshot(readopts.inner(), self.snapshot) };
+        readopts.set_snapshot(&self.snapshot);
         self.db.iterator_opt(mode, readopts)
     }
 
     pub fn raw_iterator(&self) -> DBRawIterator
     {
         let mut readopts = ReadOptions::default();
-        unsafe { ffi::rocksdb_readoptions_set_snapshot(readopts.inner(), self.snapshot) };
+        readopts.set_snapshot(&self.snapshot);
         DBRawIterator::new(self.db, readopts)
     }
 }
