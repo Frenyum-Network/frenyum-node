@@ -47,15 +47,5 @@ impl<'a> Snapshot<'a>
     }
 }
 
-impl<'a> Drop for Snapshot<'a>
-{
-    fn drop(&mut self)
-    {
-        unsafe {
-            ffi::rocksdb_release_snapshot(self.db.inner(), self.snapshot);
-        }
-    }
-}
-
 unsafe impl<'a> Sync for Snapshot<'a> {}
 unsafe impl<'a> Send for Snapshot<'a> {}
