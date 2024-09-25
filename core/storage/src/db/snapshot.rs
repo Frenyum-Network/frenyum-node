@@ -43,7 +43,7 @@ impl<'a> Snapshot<'a>
     {
         let mut readopts = ReadOptions::default();
         readopts.set_snapshot(&self.snapshot);
-        DBRawIterator::new(self.db, readopts)
+        self.db.raw_iterator_opt(readopts)
     }
 }
 
