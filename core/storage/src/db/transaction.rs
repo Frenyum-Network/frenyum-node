@@ -9,7 +9,7 @@ impl RocksDBTransaction
         col: &str,
         key: K,
     ) -> Result<Option<DBPinnableSlice>, Error> {
-        let cf_handle = self.inner.get_cf_handle(col)?;
+        let cf_handle = self.inner.cf_handle(col).ok_or(format!("Column family not found"));
         self.inner.get_pinned_cf(cf_handle, key, &ReadOptions::default())
     }
     
@@ -19,7 +19,7 @@ impl RocksDBTransaction
         key: K,
         value: V,
     ) -> Result<(), Error> {
-        let cf_handle = self.inner.get_cf_handle(col)?;
+        let cf_handle = self.inner.cf_handle(col).ok_or(format!("Column family not found"));
         self.inner.put_cf(cf_handle, key, value)
     }
 
@@ -28,7 +28,7 @@ impl RocksDBTransaction
         col: &str,
         key: K,
     ) -> Result<(), Error> {
-        let cf_handle = self.inner.get_cf_handle(col)?;
+        let cf_handle = self.inner.cf_handle(col).ok_or(format!("Column family not found"));
         self.inner.delete_cf(cf_handle, key)
     }
 
