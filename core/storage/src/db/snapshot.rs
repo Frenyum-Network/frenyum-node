@@ -1,9 +1,9 @@
-use rocksdb::{DB, ColumnFamily, ReadOptions, Error, IteratorMode, DBIterator, DBRawIterator};
+use rocksdb::{DB, ColumnFamily, ReadOptions, Error, IteratorMode, DBIterator, DBRawIterator, Snapshot as RocksDBSnapshot};
 
 pub struct Snapshot<'a>
 {
     db: &'a DB,
-    pub(crate) snapshot: *const ffi::rocksdb_snapshot_t,
+    pub(crate) snapshot: RocksDBSnapshot<'a>,
 }
 
 impl<'a> Snapshot<'a>
