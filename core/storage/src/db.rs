@@ -10,6 +10,5 @@ use std::path::Path;
 pub struct DBManager
 {
     db: TransactionDB,
-    write_batch: WriteBatch,
 }
 
