@@ -37,7 +37,7 @@ impl<'a> Snapshot<'a>
         self.db.get_cf_opt(cf, key, &readopts)
     }
     
-    // Creates an iterator (loop) in the database using the snapshot.
+    // Creates an iterator in the database using the snapshot.
     // This iterator traverses the database as it was at the time of the snapshot.
     pub fn iterator(&self, mode: IteratorMode) -> DBIterator<'a>
     {
