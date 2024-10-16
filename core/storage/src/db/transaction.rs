@@ -53,3 +53,13 @@ impl RocksDBTransaction
         Ok(())
     }
 }
+
+impl <'a> Drop for RocksDBTransaction
+{
+    fn drop(&mut self)
+    {
+        if let Err(e) = self.rollback() {
+            eprintln!("Failed to rollback transaction {:?}", e);
+        }
+    }
+}
