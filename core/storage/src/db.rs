@@ -5,6 +5,7 @@ pub mod transaction;
 pub mod write_batch;
 
 use utils::configs::db::StoreConfig;
+use crate::db::rocksdb::RocksDB;
 use rocksdb::db::{DB, Options, WriteBatch, ColumnFamily, TransactionDB, Error};
 use std::path::PathBuf;
 
@@ -24,5 +25,10 @@ impl DBManager
         Ok(Self {
             db,
         })
+    }
+
+    pub fn db(&self) -> &RocksDB
+    {
+        &self.db
     }
 }
