@@ -9,17 +9,17 @@ pub struct StoreConfig
 {
     // Represents the directory where the database files will be stored.
     // The user does not have to specify a path. Null by default
-    path: Option<PathBuf>,
+    pub path: Option<PathBuf>,
     // Specifies the maximum number of files that can be opened at the same time.
     // It will be a limited value, usually due to a limitation due to the file system.
     // 1000 by default.
-    max_open_files: u32,
+    pub max_open_files: u32,
     // Specifies the size of the database cache in bytes.
     // 160 MB by default.
-    cache_size: usize,
+    pub cache_size: usize,
     // Specifies the size of database blocks in bytes.
     // 16 KB by default.
-    block_size: usize,
+    pub block_size: usize,
 }
 
 impl Default for StoreConfig
