@@ -1,5 +1,8 @@
+use std::net::SocketAddr;
+
+#[derive(Debug, Clone)]
 pub struct PeerInfo
 {
-    // Peer id
-    // Listened addr
+    pub addr: SocketAddr,
+    // Peer Id
 }
