@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-utils = { path = "../utils" }
+utils = { path = "../core-utils" }
 crypto = { path = "../crypto" }
 ethereum-types = "0.14.1"
 criterion = "0.5.1"
