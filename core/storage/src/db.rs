@@ -4,7 +4,7 @@ pub mod snapshot;
 pub mod transaction;
 pub mod write_batch;
 
-use utils::configs::db::StoreConfig;
+use core_utils::configs::db::StoreConfig;
 use crate::db::rocksdb::RocksDB;
 use rocksdb::db::{DB, Options, WriteBatch, ColumnFamily, TransactionDB, Error};
 use std::path::PathBuf;
