@@ -2,7 +2,7 @@
 members = [
     "core/primvites",
     "core/crypto",
-    "core/core-utils", 
+    "core/core_utils", 
     "core/storage", "chain/network", "chain/chain-utils",
 ]
 
