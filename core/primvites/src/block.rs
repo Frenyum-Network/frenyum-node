@@ -1,5 +1,5 @@
 use crate::{block_header::BlockHeader, transaction::SignedTransaction};
-use utils::gas::Gas;
+use core_utils::gas::Gas;
 use std::{sync::Arc, fmt::Formatter, fmt};
 
 pub struct Block

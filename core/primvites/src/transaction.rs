@@ -1,4 +1,4 @@
-use utils::{gas::Gas, timestamp::Timestamp};
+use core_utils::{gas::Gas, timestamp::Timestamp};
 use crypto::{hash::HashDigest, hash::Algorithm, ed25519::Signature, ed25519::PublicKey, ed25519::PrivateKey};
 use crate::{U256, Address, Bytes};
 use serde::Serialize;

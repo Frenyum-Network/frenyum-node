@@ -10,7 +10,7 @@
 //! ```
 //! use crate::{BlockHeader, BlockHeaderBuilder};
 //! use crypto::hash::HashDigest;
-//! use utils::timestamp::Timestamp;
+//! use core_utils::timestamp::Timestamp;
 //! use crate::{BlockNumber, BlockHeight, U256};
 //!
 //! // Create a new BlockHeader using the builder pattern
@@ -35,7 +35,7 @@
 //! Note: This is just an example. Actual values may vary depending on the use case.
 
 use crypto::hash::HashDigest;
-use utils::timestamp::Timestamp;
+use core_utils::timestamp::Timestamp;
 use crate::{BlockNumber, BlockHeight, U256};
 
 // An Block header
